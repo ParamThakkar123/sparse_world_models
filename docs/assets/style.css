@@ -1,0 +1,290 @@
+/* Theme-aware, no external fonts, no CDN. The page has to work as a static artifact on
+   GitHub Pages with nothing but the files next to it. */
+
+:root {
+  --bg: #fbfaf8;
+  --surface: #ffffff;
+  --ink: #14171a;
+  --ink-soft: #565d66;
+  --line: #e2e0db;
+  --accent: #b4482a;
+  --gate: #1c7a6e;
+  --truth: #b4482a;
+  --ghost: #6f7de0;
+  --goal: #c99a1f;
+  --shadow: 0 1px 2px rgba(20, 23, 26, .06), 0 8px 24px rgba(20, 23, 26, .05);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14161a;
+    --surface: #1c1f25;
+    --ink: #eceef1;
+    --ink-soft: #a2abb6;
+    --line: #2c313a;
+    --accent: #e8825f;
+    --gate: #4fc7b6;
+    --truth: #e8825f;
+    --ghost: #9aa5f5;
+    --goal: #e6c357;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .9em;
+  background: color-mix(in srgb, var(--ink) 7%, transparent);
+  padding: .1em .35em;
+  border-radius: 4px;
+}
+
+.masthead {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 3rem 1.25rem 1.5rem;
+}
+
+.eyebrow {
+  margin: 0 0 .5rem;
+  font-size: .8rem;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+h1 {
+  margin: 0 0 .75rem;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  line-height: 1.12;
+  letter-spacing: -.02em;
+}
+
+.standfirst {
+  margin: 0;
+  max-width: 46rem;
+  font-size: 1.05rem;
+  color: var(--ink-soft);
+}
+
+.loading {
+  margin: 1rem 0 0;
+  font-size: .9rem;
+  color: var(--ink-soft);
+}
+
+.tasks {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.tasks button {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-soft);
+  padding: .5rem 1rem;
+  border-radius: 999px;
+  font: inherit;
+  font-size: .9rem;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+
+.tasks button:hover { border-color: var(--accent); color: var(--ink); }
+.tasks button.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+main { max-width: 62rem; margin: 0 auto; padding: 1.25rem; }
+
+.stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .stage { grid-template-columns: minmax(0, 1fr); }
+}
+
+.canvas-wrap {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: .75rem;
+  box-shadow: var(--shadow);
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.canvas-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .25rem 1rem;
+  padding: .6rem .25rem 0;
+  font-size: .78rem;
+  color: var(--ink-soft);
+}
+
+.canvas-legend span { display: inline-flex; align-items: center; gap: .35rem; }
+
+.swatch {
+  width: .7rem;
+  height: .7rem;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.swatch.pusher { background: var(--ink); border-radius: 50%; }
+.swatch.gate-on { background: var(--gate); }
+.swatch.truth { background: transparent; border: 2px solid var(--truth); }
+.swatch.ghost { background: transparent; border: 2px dashed var(--ghost); }
+.swatch.goal { background: var(--goal); border-radius: 50%; }
+
+.panel { display: grid; gap: 1.25rem; }
+
+.task-copy {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  padding: .9rem 1rem;
+  font-size: .92rem;
+}
+
+.task-copy h2 { margin: 0 0 .35rem; font-size: 1rem; }
+.task-copy p { margin: 0; color: var(--ink-soft); }
+
+.controls {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: .9rem 1rem;
+  display: grid;
+  gap: .7rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  flex-wrap: wrap;
+  font-size: .88rem;
+}
+
+.row label { color: var(--ink-soft); display: inline-flex; align-items: center; gap: .35rem; }
+.row input[type="range"] { flex: 1 1 8rem; accent-color: var(--accent); }
+.row output { font-variant-numeric: tabular-nums; min-width: 4.5rem; }
+
+.controls button, select {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink);
+  border-radius: 8px;
+  padding: .45rem .9rem;
+  font: inherit;
+  font-size: .88rem;
+  cursor: pointer;
+}
+
+.controls button.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.controls button:hover { border-color: var(--accent); }
+
+.hint { margin: 0; font-size: .8rem; color: var(--ink-soft); }
+
+.scoreboard {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: .9rem 1rem 1.1rem;
+}
+
+.scoreboard h2 {
+  margin: 0 0 .4rem;
+  font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: .5rem;
+}
+
+.frames { font-size: .78rem; font-weight: 400; color: var(--ink-soft); }
+
+.scorenote { margin: 0 0 .8rem; font-size: .78rem; color: var(--ink-soft); }
+
+table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+
+th, td {
+  text-align: right;
+  padding: .3rem .4rem;
+  border-bottom: 1px solid var(--line);
+  font-variant-numeric: tabular-nums;
+}
+
+th:first-child, td:first-child { text-align: left; font-variant-numeric: normal; }
+thead th { font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); }
+
+tr.model td { background: color-mix(in srgb, var(--accent) 12%, transparent); font-weight: 600; }
+tr.zero-param td:nth-child(2) { color: var(--gate); font-weight: 600; }
+td .rule-name { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .95em; }
+
+.explainer { margin-top: 3rem; }
+.explainer h2 { font-size: 1.3rem; margin: 0 0 1rem; }
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1rem;
+}
+
+.cards article {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.cards h3 { margin: 0 0 .4rem; font-size: .95rem; }
+.cards p { margin: 0; font-size: .88rem; color: var(--ink-soft); }
+
+.footer-note {
+  margin: 2rem 0 4rem;
+  font-size: .85rem;
+  color: var(--ink-soft);
+  border-top: 1px solid var(--line);
+  padding-top: 1rem;
+}
+
+/* Shown when the running checkpoint was not trained on what it is being scored on. This is a
+   caveat the page must not let a reader miss, so it is styled to be read, not skimmed. */
+.warn {
+  margin: 0;
+  font-size: .8rem;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--goal) 18%, transparent);
+  border-left: 3px solid var(--goal);
+  border-radius: 6px;
+  padding: .5rem .7rem;
+}

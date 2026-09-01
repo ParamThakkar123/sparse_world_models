@@ -1,0 +1,221 @@
+\documentclass{article}
+\usepackage{iclr2027_conference,times}
+
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{url}
+
+\iclrfinalcopy
+
+\title{Change-Detection Benchmarks for Object-Centric \\ World Models Are Degenerate}
+
+\author{Param Thakkar\textsuperscript{1} \And Parsika Paresh Shah\textsuperscript{2} \And Manisha Sushant Gote\textsuperscript{3} \\
+\textsuperscript{1}Veermata Jijabai Technological Institute \texttt{puthakkar\_b22@ce.vjti.ac.in} \quad
+\textsuperscript{2}Arizona State University \texttt{pshah144@asu.edu} \quad
+\textsuperscript{3}Zuigo Private Limited \texttt{manisha@zuigo.ai}
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+% DRAFT. Every number below is traceable to experiments/RESULTS.md; see the claim ledger.
+Object-centric world models are routinely credited with predicting \emph{which} objects in a
+scene will change. We show that the benchmarks used to support that claim are degenerate, and
+that the degeneracy is not fixable by filtering the data.
+We audit three successive change-detection benchmarks on a tabletop manipulation task, each
+constructed to remove its predecessor's shortcut, using a battery of eleven rules that have no
+learned parameters or one.
+A motion-filtered benchmark is won by \emph{velocity} (predict change iff the object is
+already moving, F1 $0.927$); the onset-filtered benchmark that removes the velocity shortcut is
+won by \emph{geometry} (predict change for the single object nearest the actuator---zero
+parameters, F1 $0.961$); and an interaction-filtered benchmark that removes the geometry
+shortcut is won by \emph{propagated kinematics} (F1 $0.955$).
+The best trivial rule never falls below $0.93$.
+Five published object-centric world models---GNS/DPI-Net, C-SWM, SlotFormer, PETS and
+NPS---implemented from their papers, trained with their native objectives and capacity-matched,
+lose to these rules on every benchmark, and are degenerate in a second sense: every one flags
+essentially all objects as changing (recall $0.9986$--$1.0000$).
+We give the mechanism---with a single actuator and local contact the label is recoverable from
+one scalar, and a filter only chooses which---and release the audit battery, together with the
+methodological requirement that it be run with rules invented \emph{against} the benchmark
+under test rather than against the one it replaces.
+\end{abstract}
+
+% =====================================================================================
+\section{Introduction}
+% Frame: the field's standard claim, the check nobody runs, what we found, what we ship.
+% Contributions, stated as the three that survived proper baselines:
+%   1. The degeneracy result across three benchmarks and five published models.
+%   2. The audit battery + the methodological requirement (the deliverable).
+%   3. The one architecture claim that survived: error suppression on unchanged objects.
+% Be explicit that (3) is small and that two of our own earlier claims are refuted here.
+% Source: RESULTS.md "READ SECOND" -> "What the paper should claim".
+
+% =====================================================================================
+\section{Related work}
+% Object-centric world models (C-SWM, SlotFormer, NPS, GNS/DPI-Net, PETS).
+% Shortcut learning / Clever Hans / benchmark critique literature -- position this paper
+% there, not in the architecture literature.
+% Prior benchmark audits in adjacent fields (NLI hypothesis-only baselines, VQA language
+% priors) are the closest methodological ancestors and should be cited as such: the
+% contribution is not "trivial baselines are a good idea" but that this specific field has
+% not run them and that filtering does not fix it.
+
+% =====================================================================================
+\section{Setup}
+\label{sec:setup}
+% Four domains on four engines (RESULTS.md "The domain suite"):
+%   tabletop  MuJoCo      impulsive 3D
+%   planar    ours        quasi-static
+%   billiards Box2D       near-elastic
+%   clutter   Chipmunk2D  high-friction, dense packing
+% Per-domain motion thresholds are DERIVED, not hand-tuned (domain_characterization.py);
+% state the self-check that recovers 0.020 for tabletop and 0.010 for planar.
+% Splits are episode-disjoint (build_clean_splits.py); state the leak that made this
+% necessary, because a reviewer will ask why there are two split families.
+
+% =====================================================================================
+\section{The battery}
+\label{sec:battery}
+% Eleven rules, grouped by what they use: kinematics, geometry, propagated kinematics,
+% plus always_change as the degeneracy floor.
+% Two commitments that make the audit non-circular:
+%   (a) thresholded rules fit their radius on VALIDATION and apply it unchanged to test;
+%   (b) five rules were invented against the interaction benchmark BEFORE it was built.
+% The one-feature logistic regression is the control that rules out "you undertrained it".
+% Source: RESULTS.md "READ SECOND", experiments/onset_shortcut_audit.py.
+
+% =====================================================================================
+\section{Three benchmarks, three one-liners}
+\label{sec:three}
+
+\begin{table}[t]
+\caption{Each filter removes its predecessor's shortcut and is won by the next one-liner.
+The best trivial rule never drops below $0.93$. TODO: replace with the generated table once
+\texttt{iclr\_closeout.sh} stage 2 lands five-seed numbers; these are three-seed means.}
+\label{tab:three}
+\centering
+\begin{tabular}{llrr}
+\toprule
+benchmark & winning trivial rule & best trivial F1 & best learned gate \\
+\midrule
+motion      & \texttt{already\_moving} (velocity)             & 0.927 & 0.825 \\
+onset       & \texttt{nearest\_to\_pusher} (0 parameters)     & 0.961 & 0.694 \\
+interaction & \texttt{moving\_or\_near\_mover} (propagated)   & 0.955 & 0.772 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% One subsection per benchmark: what it filters, what it defeats, what defeats it.
+% Include the reciprocal check: `contact` featurisation is WORSE on already-moving objects,
+% so the two featurisations solve different halves and the motion benchmark scored only the
+% half needing no prediction.
+% Include always_change rising to 0.673 on the interaction benchmark -- filtering for harder
+% events made the class balance easier, which is a second degeneracy.
+% RECORD THE CORRECTION: an earlier partial run put the trivial ceiling at 0.976 and was
+% written up as monotonically rising; the full run gives 0.955. Report the weaker claim.
+
+% =====================================================================================
+\section{Five published models}
+\label{sec:published}
+% Motion benchmark: one line of code beats all five at every object count; paired bootstrap
+% on the DIFFERENCE excludes zero (N=8: -0.519, CI [-0.565, -0.494]).
+% Every published model has recall 0.9986-1.0000 -- ungated regression is degenerate as a
+% class, not just in the rungs we built.
+% NPS specifically does not substitute for a change gate (pre-registered prediction (b)).
+% Two unpredicted findings: PETS ensemble disagreement rides the shortcut (AUC 0.766 -> 0.527);
+% C-SWM's own metric improves on onset while its change probe stays degenerate.
+
+% =====================================================================================
+\section{Why it happens}
+\label{sec:mechanism}
+% Structural, not a bug in any filter: one point-like actuator + minimum separation means
+% contact is spatially unambiguous, so the label is recoverable from a single scalar and the
+% filter only selects which scalar.
+% What a non-degenerate benchmark would need: multiple simultaneous actuators, occluded or
+% long-range coupling, delayed effects -- a change of TASK, not of filter.
+% Evidence on packing: dense-packed variant erodes proximity (0.823 -> 0.768) but not enough.
+% TODO: the clutter result (iclr_closeout.sh stage 1) goes here. If the battery LOSES there,
+% this section becomes a positive result and the paper is restructured around it.
+
+% =====================================================================================
+\section{What survives}
+\label{sec:survives}
+% Deliberately short and deliberately modest.
+% Error suppression on unchanged objects: the gap over a dense monolith GROWS with object
+% count (0.271 -> 0.438 monotone, N=3..20, sparse flat), replicated in a second environment,
+% unmatched by any of the five published baselines. Quote the DIFFERENCE, not the ratio --
+% the ratio's denominator is a false-positive rate ~0.001 and is noise-dominated.
+% The gate as a local causal mask for counterfactual splicing (0.948 vs 0.952 validity).
+% Velocity-free contact featurisation is what buys onset prediction.
+
+% =====================================================================================
+\section{Limitations}
+\label{sec:limitations}
+% State these plainly; each is measured rather than hedged.
+% 1. Single-actuator manipulation with local contact. The claim is bounded to that class and
+%    the mechanism section says what would fall outside it.
+% 2. Privileged state, not pixels. Report the MEASURED cause: objects cover ~0.7% of a 96x96
+%    frame, Slot Attention collapses (match distance 33.4 px, chance ~33), keypoints plateau
+%    at 21.6 px. This is a useful negative for anyone attempting the same thing.
+%    TODO: replace with the foreground-weighted result if stage 4 lands.
+% 3. Seed counts. n=3 gives a minimum attainable p of 0.250; quote difference CIs.
+%    TODO: five-seed numbers from stage 2.
+% 4. Planning: four of five published models plan; the ordering among them is within noise at
+%    20 episodes and one training seed. Do NOT claim PETS beats ours until stage 3 lands.
+
+% =====================================================================================
+\section{Interactive demo}
+
+The paper's central claim is checkable in a browser.
+\url{https://paramthakkar123.github.io/WorldModelsWorkshop/} runs the actual
+trained gate and delta head (5,636 parameters) live against planar physics and
+recorded MuJoCo/Box2D/Chipmunk episodes, scored against the eleven trivial rules
+frame by frame. Four tasks: a sandbox the reader drives, replay across four
+engines, count transfer with one checkpoint, and CEM planning through the model.
+No server, no build step; the JavaScript forward pass is checked against PyTorch
+to $10^{-4}$ by \texttt{tests/test\_web\_export.py} and served from \texttt{docs/}
+via GitHub Pages.
+
+\section{Conclusion}
+
+% =====================================================================================
+\section*{Reproducibility statement}
+Every number traces to \texttt{experiments/RESULTS.md} and a directory in
+\texttt{experiments/runs/} with \texttt{config.json}, \texttt{metrics.csv}, and
+\texttt{summary.json}. The audit battery \texttt{experiments/onset\_shortcut\_audit.py}
+and \texttt{experiments/audit\_battery.py} run on any benchmark via
+\texttt{python -m experiments.audit\_battery --test yours\_test.npz --val yours\_val.npz}.
+Data generation is seeded and deterministic; splits are episode-disjoint via
+\texttt{experiments/build\_clean\_splits.py}, which replaces the leaky splits noted in
+\texttt{RESULTS.md}. The test suite (\texttt{pytest tests/}, 202 tests) pins metrics,
+splits, and the browser export. Checkpoints in \texttt{models/checkpoints/} are the
+exact weights evaluated and exported to \texttt{docs/assets/model.json}.
+
+% =====================================================================================
+\section*{Use of large language models}
+An AI coding assistant was used to implement methods, design and iterate on
+experiments, clean and reformat datasets, and interpret results. Specifically:
+the audit battery, four-engine domain suite, five literature baselines (GNS/DPI-Net,
+C-SWM, SlotFormer, PETS, NPS), sparse/dense models, and the browser demo
+(\texttt{docs/assets/model.js}, \texttt{battery.js}, \texttt{planar.js}, \texttt{app.js})
+were implemented with assistance; the contact featurisation, experiment analysis,
+and manuscript drafting were iterated with its feedback. All claims, numbers, and
+statistical tests were verified by the author against \texttt{experiments/RESULTS.md}
+and the run artifacts; the author remains responsible for every claim and for any
+error the assistant may have introduced.
+
+\bibliographystyle{iclr2027_conference}
+\bibliography{iclr2027_conference}
+
+\appendix
+\section{The full battery}
+% All eleven rules with their definitions and fitted radii, per benchmark and per domain.
+
+\section{Per-domain characterisation}
+% P(change | moving) vs P(change | at rest) on four engines, and the threshold derivation.
+
+\end{document}

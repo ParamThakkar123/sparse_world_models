@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Change-detection benchmarks are degenerate — live demo</title>
+<meta name="description" content="Run a trained object-centric world model in your browser and watch a zero-parameter rule beat it.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="masthead">
+  <p class="eyebrow">Interactive demo · object-centric world models</p>
+  <h1>A one-line rule beats the model. Watch it happen.</h1>
+  <p class="standfirst">
+    Everything below runs in this tab: the <strong>actual trained weights</strong> from the
+    paper's checkpoint, the physics, and the eleven trivial rules it is scored against. No
+    server, no video. If you would rather not take a table's word for it, drive the scene
+    yourself and read the scoreboard.
+  </p>
+  <p class="loading" id="status">Loading model…</p>
+</header>
+
+<nav class="tasks" id="tasks" aria-label="Choose a task">
+  <button data-task="sandbox" class="active">Sandbox</button>
+  <button data-task="replay">Four engines</button>
+  <button data-task="transfer">Count transfer</button>
+  <button data-task="planning">Planning</button>
+</nav>
+
+<main>
+  <section class="stage">
+    <div class="canvas-wrap">
+      <canvas id="scene" width="720" height="720" aria-label="Simulation view"></canvas>
+      <div class="canvas-legend">
+        <span><i class="swatch pusher"></i>pusher</span>
+        <span><i class="swatch gate-on"></i>gate ON</span>
+        <span><i class="swatch truth"></i>actually changed</span>
+        <span><i class="swatch ghost"></i>model's predicted next pose</span>
+        <span><i class="swatch goal"></i>goal</span>
+      </div>
+    </div>
+
+    <aside class="panel">
+      <div class="task-copy" id="task-copy"></div>
+
+      <div class="controls">
+        <div class="row">
+          <button id="play" class="primary">Pause</button>
+          <button id="reset">New scene</button>
+        </div>
+        <div class="row" id="drive-row">
+          <label><input type="radio" name="drive" value="auto" checked> Auto policy</label>
+          <label><input type="radio" name="drive" value="mouse"> I drive (mouse)</label>
+        </div>
+        <div class="row" id="count-row" hidden>
+          <label for="count">Objects</label>
+          <input type="range" id="count" min="2" max="12" step="1" value="3">
+          <output id="count-out">3</output>
+        </div>
+        <div class="row">
+          <label for="radius">Rule contact radius</label>
+          <input type="range" id="radius" min="0.02" max="0.22" step="0.005" value="0.07">
+          <output id="radius-out">0.070 m</output>
+        </div>
+        <div class="row" id="episode-row" hidden>
+          <label for="episode">Engine</label>
+          <select id="episode"></select>
+        </div>
+        <p class="hint" id="hint"></p>
+        <p class="hint">Running checkpoint: <code id="model-label">…</code></p>
+        <p class="warn" id="domain-notice" hidden></p>
+      </div>
+
+      <div class="scoreboard">
+        <h2>Live scoreboard <span class="frames" id="frames">0 frames</span></h2>
+        <p class="scorenote">
+          F1 over every frame since the last reset that passes the same
+          <code>--min-max-xy-delta 0.02</code> motion filter the paper's benchmarks are built
+          with, computed exactly as <code>onset_shortcut_audit.py</code> does. Unfiltered, ~95%
+          of steps are the pusher travelling with nothing happening, and no number would be
+          comparable to any number in the paper. <strong>Onset F1</strong> is the column that
+          matters: it scores only objects currently at rest, which can start moving only
+          through contact, so it measures prediction rather than continuation.
+        </p>
+        <table id="scores">
+          <thead>
+            <tr><th>rule</th><th>params</th><th>F1</th><th>onset F1</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </aside>
+  </section>
+
+  <section class="explainer">
+    <h2>What you are looking at</h2>
+    <div class="cards">
+      <article>
+        <h3>The model is real</h3>
+        <p>
+          The gate and delta head are exported straight from the paper's checkpoints —
+          <output id="param-count">…</output> parameters — and the JavaScript forward pass is
+          checked against PyTorch to 1e-4 by <code>tests/test_web_export.py</code>. Two
+          checkpoints ship: the live sandbox runs the <strong>planar</strong>-trained gate
+          because the sandbox is planar physics, and the replay tab runs the
+          <strong>tabletop</strong>-trained one. Scoring a tabletop model on live planar
+          physics would put a domain shift on screen with nothing to label it.
+        </p>
+      </article>
+      <article>
+        <h3>The rules have no parameters</h3>
+        <p>
+          <code>nearest_to_pusher</code> predicts change for the single object closest to the
+          pusher. Nothing is fitted. On the paper's onset benchmark it scores F1 0.925 against
+          the learned gate's 0.694. The thresholded rules have exactly one parameter, and the
+          slider lets you check that no particular setting is doing the work.
+        </p>
+      </article>
+      <article>
+        <h3>Why it happens</h3>
+        <p>
+          With one point-like pusher and objects kept apart, contact is spatially unambiguous:
+          the pusher is near at most one object and that object is the one that moves. The
+          label is recoverable from a single scalar. Three successive benchmarks each removed
+          one such scalar and were promptly won by the next.
+        </p>
+      </article>
+      <article>
+        <h3>What still stands</h3>
+        <p>
+          The gate's real advantage is not detection but <em>error suppression</em>: objects it
+          leaves off are copied forward exactly, so they accumulate no error, and the gap over
+          a dense monolith grows with object count. Turn the object count up on the
+          <strong>Count transfer</strong> task and watch the untouched objects stay put.
+        </p>
+      </article>
+    </div>
+    <p class="footer-note">
+      Full results, including the three claims of ours that proper baselines refuted, are in
+      <code>experiments/RESULTS.md</code>. The audit battery runs on any benchmark:
+      <code>python -m experiments.audit_battery --test yours_test.npz --val yours_val.npz</code>.
+    </p>
+  </section>
+</main>
+
+<script type="module" src="assets/app.js"></script>
+</body>
+</html>

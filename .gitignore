@@ -1,0 +1,35 @@
+# Generated datasets (~165 MB). Regenerate with the commands in README.md /
+# dataset_commands.md -- generation is seeded and deterministic.
+data/transitions/
+data/**/*.npz
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Test / benchmark caches
+.pytest_cache/
+.benchmarks/
+
+# LaTeX build artifacts (the built PDF is tracked; intermediates are not)
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.synctex.gz
+IEEE_Conference_Template.zip
+
+# OS
+.DS_Store
+Thumbs.db
+
+# The paper PDF is a build artifact and churns on every compile; paper/preflight.py rebuilds
+# it. (docs/assets/*.json are generated too, but ARE tracked -- GitHub Pages serves them
+# directly, so the site would be dead without them.)
+paper/main.pdf
+models/checkpoints/
+experiments/runs/

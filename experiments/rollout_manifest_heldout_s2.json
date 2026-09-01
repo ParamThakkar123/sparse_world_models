@@ -1,0 +1,19 @@
+{
+  "runs": [
+    {
+      "data": "data/transitions/scale_3obj_heldout.npz",
+      "sparse_checkpoint": "models/checkpoints/sparse_3obj_s2.pt",
+      "dense_checkpoint": "models/checkpoints/dense_3obj_s2.pt"
+    },
+    {
+      "data": "data/transitions/scale_5obj_heldout.npz",
+      "sparse_checkpoint": "models/checkpoints/sparse_5obj_s2.pt",
+      "dense_checkpoint": "models/checkpoints/dense_5obj_s2.pt"
+    },
+    {
+      "data": "data/transitions/scale_8obj_heldout.npz",
+      "sparse_checkpoint": "models/checkpoints/sparse_8obj_s2.pt",
+      "dense_checkpoint": "models/checkpoints/dense_8obj_s2.pt"
+    }
+  ]
+}
