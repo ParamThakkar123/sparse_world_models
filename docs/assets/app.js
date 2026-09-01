@@ -5,7 +5,10 @@ import { OBJECT_RADIUS, PUSHER_RADIUS, PlanarPushEnv, changedMask } from './plan
 const WORLD_BOUND = 0.28;
 const BASE_STEP_MS = 60;
 const MOTION_THRESHOLD = 0.02;
-const HF_BASE = 'https://huggingface.co/datasets/ParamThakkar123/sparse_world_models/resolve/main';
+const HF_BASES = [
+  'https://huggingface.co/datasets/ParamThakkar123/sparse_world_models/resolve/main',
+  'https://huggingface.co/datasets/ParamTh/sparse_world_models/resolve/main',
+];
 
 const TASKS = {
   sandbox: {
@@ -539,7 +542,7 @@ async function loadBundleWithFallback() {
   const candidates = [];
   if (override) candidates.push(override);
   candidates.push('assets/model.json');
-  candidates.push(`${HF_BASE}/docs/assets/model.json`);
+  for (const base of HF_BASES) candidates.push(`${base}/docs/assets/model.json`);
   let lastError = null;
   for (const url of candidates) {
     try {
@@ -569,7 +572,13 @@ async function main() {
     if (progressBar) progressBar.style.width = '60%';
     let episodes = null;
     try { episodes = await fetchWithProgress('assets/episodes.json', 'episodes'); }
-    catch { episodes = await fetchWithProgress(`${HF_BASE}/docs/assets/episodes.json`, 'episodes'); }
+    catch {
+      let lastErr = null;
+      for (const base of HF_BASES) {
+        try { episodes = await fetchWithProgress(`${base}/docs/assets/episodes.json`, 'episodes'); break; } catch (e) { lastErr = e; }
+      }
+      if (!episodes) throw lastErr;
+    }
     state.episodes = episodes;
     if (progressBar) progressBar.style.width = '100%';
     setTimeout(() => { if (progress) progress.hidden = true; }, 400);
