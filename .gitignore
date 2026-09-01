@@ -31,5 +31,6 @@ Thumbs.db
 # it. (docs/assets/*.json are generated too, but ARE tracked -- GitHub Pages serves them
 # directly, so the site would be dead without them.)
 paper/main.pdf
-models/checkpoints/
+models/checkpoints/*.pt
+!models/checkpoints/README.md
 experiments/runs/

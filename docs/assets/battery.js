@@ -20,11 +20,11 @@ export const RULE_DESCRIPTIONS = {
   nearest_to_pusher: 'Predict change for the single object closest to the pusher. Zero parameters. Wins the onset benchmark.',
   second_nearest_to_pusher: 'The obvious follow-up once "nearest" is defeated.',
   two_nearest_to_pusher: 'The two closest objects.',
-  moving_or_near: 'Moving OR near the pusher — the best a reader could do by combining both shortcuts by hand.',
+  moving_or_near: 'Moving OR near the pusher: the best a reader could do by combining both shortcuts by hand.',
   near_a_mover: 'Within a radius of an object that is already moving. The natural shortcut for a contact chain.',
   near_pusher_or_mover: 'Near the pusher OR near a mover.',
   moving_or_near_mover: 'Moving OR near a mover. Wins the interaction benchmark.',
-  always_change: 'Flag everything. The degeneracy floor — every ungated published model sits here (recall 0.999–1.000).',
+  always_change: 'Flag everything. The degeneracy floor: every ungated published model sits here (recall 0.999 to 1.000).',
 };
 
 export const ZERO_PARAMETER_RULES = new Set([

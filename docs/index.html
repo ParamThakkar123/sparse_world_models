@@ -3,22 +3,31 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Change-detection benchmarks are degenerate — live demo</title>
+<title>Change-detection benchmarks are degenerate: live demo</title>
 <meta name="description" content="Run a trained object-centric world model in your browser and watch a zero-parameter rule beat it.">
+<meta name="theme-color" content="#14171a">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 
 <header class="masthead">
-  <p class="eyebrow">Interactive demo · object-centric world models</p>
+  <div class="masthead-top">
+    <p class="eyebrow">Interactive demo &middot; object-centric world models</p>
+    <div class="header-actions">
+      <a class="chip" href="https://github.com/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">GitHub</a>
+      <a class="chip" href="https://huggingface.co/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">Checkpoints on HF</a>
+      <button class="chip" id="theme-toggle" type="button" aria-label="Toggle theme">Theme</button>
+    </div>
+  </div>
   <h1>A one-line rule beats the model. Watch it happen.</h1>
   <p class="standfirst">
     Everything below runs in this tab: the <strong>actual trained weights</strong> from the
-    paper's checkpoint, the physics, and the eleven trivial rules it is scored against. No
-    server, no video. If you would rather not take a table's word for it, drive the scene
+    paper checkpoint, the physics, and the eleven trivial rules it is scored against. No
+    server, no video. If you would rather not take a table word for it, drive the scene
     yourself and read the scoreboard.
   </p>
-  <p class="loading" id="status">Loading model…</p>
+  <p class="loading" id="status" role="status" aria-live="polite">Loading model…</p>
+  <div class="progress" id="progress" hidden><div class="bar" id="progress-bar"></div></div>
 </header>
 
 <nav class="tasks" id="tasks" aria-label="Choose a task">
@@ -31,58 +40,113 @@
 <main>
   <section class="stage">
     <div class="canvas-wrap">
+      <div class="canvas-toolbar">
+        <span class="toolbar-label" id="fps">60 fps</span>
+        <div class="toolbar-actions">
+          <button id="btn-step" title="Step one frame (.)">Step</button>
+          <button id="btn-trails" title="Toggle object trails (T)" aria-pressed="false">Trails</button>
+          <button id="btn-probs" title="Toggle gate probabilities (P)" aria-pressed="true">Probs</button>
+          <button id="btn-screenshot" title="Save PNG">PNG</button>
+        </div>
+      </div>
       <canvas id="scene" width="720" height="720" aria-label="Simulation view"></canvas>
+      <div class="inspector" id="inspector" hidden></div>
       <div class="canvas-legend">
         <span><i class="swatch pusher"></i>pusher</span>
         <span><i class="swatch gate-on"></i>gate ON</span>
         <span><i class="swatch truth"></i>actually changed</span>
-        <span><i class="swatch ghost"></i>model's predicted next pose</span>
+        <span><i class="swatch ghost"></i>predicted next pose</span>
         <span><i class="swatch goal"></i>goal</span>
+        <span class="legend-hint">Hover object for details. Drag or use arrows/WASD in keyboard mode.</span>
       </div>
+      <div class="overlay" id="paused-overlay" hidden>Paused. Press Play or hit Space.</div>
     </div>
 
     <aside class="panel">
       <div class="task-copy" id="task-copy"></div>
 
       <div class="controls">
-        <div class="row">
-          <button id="play" class="primary">Pause</button>
-          <button id="reset">New scene</button>
+        <div class="control-group">
+          <h3>Playback</h3>
+          <div class="row">
+            <button id="play" class="primary">Pause</button>
+            <button id="reset">New scene</button>
+            <button id="step" title="Single frame">Step</button>
+            <button id="share" title="Copy link to this scene">Share</button>
+          </div>
+          <div class="row">
+            <label for="speed">Speed</label>
+            <input type="range" id="speed" min="0.25" max="3" step="0.25" value="1">
+            <output id="speed-out">1x</output>
+          </div>
         </div>
-        <div class="row" id="drive-row">
-          <label><input type="radio" name="drive" value="auto" checked> Auto policy</label>
-          <label><input type="radio" name="drive" value="mouse"> I drive (mouse)</label>
+
+        <div class="control-group">
+          <h3>Drive</h3>
+          <div class="row" id="drive-row">
+            <label><input type="radio" name="drive" value="auto" checked> Auto</label>
+            <label><input type="radio" name="drive" value="mouse"> Mouse</label>
+            <label><input type="radio" name="drive" value="keys"> Keys</label>
+          </div>
+          <p class="hint" id="keys-hint" hidden>Keys: arrows or WASD to push, hold Shift for fine control.</p>
         </div>
-        <div class="row" id="count-row" hidden>
-          <label for="count">Objects</label>
-          <input type="range" id="count" min="2" max="12" step="1" value="3">
-          <output id="count-out">3</output>
+
+        <div class="control-group">
+          <h3>Rules and physics</h3>
+          <div class="row" id="count-row" hidden>
+            <label for="count">Objects</label>
+            <input type="range" id="count" min="2" max="12" step="1" value="3">
+            <output id="count-out">3</output>
+          </div>
+          <div class="row">
+            <label for="radius">Contact radius</label>
+            <input type="range" id="radius" min="0.02" max="0.22" step="0.005" value="0.07">
+            <output id="radius-out">0.070 m</output>
+          </div>
+          <div class="row checks">
+            <label><input type="checkbox" id="check-trails"> Show trails</label>
+            <label><input type="checkbox" id="check-vel"> Velocity arrows</label>
+            <label><input type="checkbox" id="check-grid" checked> Grid</label>
+          </div>
+          <div class="row" id="episode-row" hidden>
+            <label for="episode">Engine</label>
+            <select id="episode"></select>
+          </div>
+          <p class="hint" id="hint"></p>
+          <p class="hint">Checkpoint: <code id="model-label">…</code> <a id="hf-link" href="https://huggingface.co/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">HF</a></p>
+          <p class="warn" id="domain-notice" hidden></p>
         </div>
-        <div class="row">
-          <label for="radius">Rule contact radius</label>
-          <input type="range" id="radius" min="0.02" max="0.22" step="0.005" value="0.07">
-          <output id="radius-out">0.070 m</output>
-        </div>
-        <div class="row" id="episode-row" hidden>
-          <label for="episode">Engine</label>
-          <select id="episode"></select>
-        </div>
-        <p class="hint" id="hint"></p>
-        <p class="hint">Running checkpoint: <code id="model-label">…</code></p>
-        <p class="warn" id="domain-notice" hidden></p>
+
+        <details class="shortcuts">
+          <summary>Keyboard shortcuts</summary>
+          <ul>
+            <li><code>Space</code> play or pause</li>
+            <li><code>R</code> new scene, <code>.</code> step one frame</li>
+            <li><code>T</code> trails, <code>P</code> probs, <code>G</code> grid</li>
+            <li><code>1</code> to <code>4</code> switch task</li>
+          </ul>
+        </details>
       </div>
 
       <div class="scoreboard">
-        <h2>Live scoreboard <span class="frames" id="frames">0 frames</span></h2>
+        <div class="scoreboard-head">
+          <h2>Live scoreboard</h2>
+          <span class="frames" id="frames">0 frames</span>
+        </div>
         <p class="scorenote">
           F1 over every frame since the last reset that passes the same
-          <code>--min-max-xy-delta 0.02</code> motion filter the paper's benchmarks are built
-          with, computed exactly as <code>onset_shortcut_audit.py</code> does. Unfiltered, ~95%
-          of steps are the pusher travelling with nothing happening, and no number would be
+          <code>--min-max-xy-delta 0.02</code> motion filter the paper benchmarks are built
+          with, computed exactly as <code>onset_shortcut_audit.py</code> does. Unfiltered, about 95
+          percent of steps are the pusher travelling with nothing happening, and no number would be
           comparable to any number in the paper. <strong>Onset F1</strong> is the column that
           matters: it scores only objects currently at rest, which can start moving only
           through contact, so it measures prediction rather than continuation.
         </p>
+        <div class="score-actions">
+          <button id="sort-f1" class="small">Sort by F1</button>
+          <button id="sort-onset" class="small">Sort by onset</button>
+          <button id="copy-scores" class="small">Copy CSV</button>
+        </div>
         <table id="scores">
           <thead>
             <tr><th>rule</th><th>params</th><th>F1</th><th>onset F1</th></tr>
@@ -99,12 +163,12 @@
       <article>
         <h3>The model is real</h3>
         <p>
-          The gate and delta head are exported straight from the paper's checkpoints —
-          <output id="param-count">…</output> parameters — and the JavaScript forward pass is
+          The gate and delta head are exported straight from the paper checkpoints,
+          <output id="param-count">…</output> parameters, and the JavaScript forward pass is
           checked against PyTorch to 1e-4 by <code>tests/test_web_export.py</code>. Two
-          checkpoints ship: the live sandbox runs the <strong>planar</strong>-trained gate
+          checkpoints ship: the live sandbox runs the <strong>planar</strong> trained gate
           because the sandbox is planar physics, and the replay tab runs the
-          <strong>tabletop</strong>-trained one. Scoring a tabletop model on live planar
+          <strong>tabletop</strong> trained one. Scoring a tabletop model on live planar
           physics would put a domain shift on screen with nothing to label it.
         </p>
       </article>
@@ -112,15 +176,15 @@
         <h3>The rules have no parameters</h3>
         <p>
           <code>nearest_to_pusher</code> predicts change for the single object closest to the
-          pusher. Nothing is fitted. On the paper's onset benchmark it scores F1 0.925 against
-          the learned gate's 0.694. The thresholded rules have exactly one parameter, and the
+          pusher. Nothing is fitted. On the paper onset benchmark it scores F1 0.925 against
+          the learned gate at 0.694. The thresholded rules have exactly one parameter, and the
           slider lets you check that no particular setting is doing the work.
         </p>
       </article>
       <article>
         <h3>Why it happens</h3>
         <p>
-          With one point-like pusher and objects kept apart, contact is spatially unambiguous:
+          With one point like pusher and objects kept apart, contact is spatially unambiguous:
           the pusher is near at most one object and that object is the one that moves. The
           label is recoverable from a single scalar. Three successive benchmarks each removed
           one such scalar and were promptly won by the next.
@@ -129,7 +193,7 @@
       <article>
         <h3>What still stands</h3>
         <p>
-          The gate's real advantage is not detection but <em>error suppression</em>: objects it
+          The gate real advantage is not detection but <em>error suppression</em>: objects it
           leaves off are copied forward exactly, so they accumulate no error, and the gap over
           a dense monolith grows with object count. Turn the object count up on the
           <strong>Count transfer</strong> task and watch the untouched objects stay put.
@@ -140,6 +204,8 @@
       Full results, including the three claims of ours that proper baselines refuted, are in
       <code>experiments/RESULTS.md</code>. The audit battery runs on any benchmark:
       <code>python -m experiments.audit_battery --test yours_test.npz --val yours_val.npz</code>.
+      Weights and full checkpoints are on <a href="https://huggingface.co/ParamThakkar123/sparse_world_models">Hugging Face</a>
+      and also in <code>docs/assets/model.json</code> for offline use.
     </p>
   </section>
 </main>

@@ -2,8 +2,8 @@
 
 A static site that runs the **trained model from the paper** in the browser, on live physics,
 scored against the trivial-rule battery frame by frame. It exists because this project's
-central claim is uncomfortable — a rule with no parameters beats a trained object-centric
-world model — and a claim like that is better checked than asserted.
+central claim is uncomfortable: a rule with no parameters beats a trained object-centric
+world model, and a claim like that is better checked than asserted.
 
 ## Publishing it
 
@@ -51,6 +51,33 @@ on screen with nothing on the page to label it.
 | `assets/model.json` | exported weights, one entry per checkpoint |
 | `assets/episodes.json` | recorded episodes for the replay tab, one per engine |
 | `assets/parity_fixture.json` | PyTorch outputs the JS port is tested against |
+| `assets/hf.json` | optional pointer to the HF repo that hosts the raw checkpoints |
+
+## Checkpoints
+
+The full `.pt` checkpoints live on Hugging Face, not in git. The demo itself is offline first: it ships `assets/model.json` and `assets/episodes.json` in the repo so GitHub Pages works with no external fetch.
+
+- HF repo: `ParamThakkar123/sparse_world_models` (dataset)
+- Assets on HF: `https://huggingface.co/datasets/ParamThakkar123/sparse_world_models/tree/main/docs/assets`
+- Checkpoints on HF: `https://huggingface.co/datasets/ParamThakkar123/sparse_world_models/tree/main/models/checkpoints`
+
+`docs/assets/app.js` tries local assets first, then falls back to `https://huggingface.co/datasets/<repo>/resolve/main/docs/assets/model.json`. Override with `?modelUrl=https://.../model.json`.
+
+To publish or update HF:
+
+```bash
+pip install huggingface_hub
+hf auth login
+python -m experiments.publish_to_hf --repo ParamThakkar123/sparse_world_models --include-checkpoints --include-assets
+```
+
+To push to GitHub Releases instead:
+
+```bash
+gh release create checkpoints-v1 models/checkpoints/*.pt docs/assets/*.json
+```
+
+See `models/checkpoints/README.md` for download and pinning.
 
 ## Two things the page is careful about
 
@@ -61,6 +88,6 @@ happening, every rule scores near zero, and no number on the page would be compa
 number in the paper.
 
 **The scoreboard reports onset F1 separately.** Overall F1 on a motion-filtered stream is
-dominated by continuation — an object in motion stays in motion — so it measures persistence
+dominated by continuation (an object in motion stays in motion) so it measures persistence
 rather than prediction. Onset F1 scores only objects currently at rest, which can start moving
 only through contact. It is the column that carries the argument.
