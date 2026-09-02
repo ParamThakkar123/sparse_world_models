@@ -82,6 +82,7 @@
   <button data-task="replay">4 Engines <small>watch replays</small></button>
   <button data-task="transfer">More Boxes <small>up to 12</small></button>
   <button data-task="planning">Make It Plan <small>CEM</small></button>
+  <button data-task="paper">Paper <small>authors and abstract</small></button>
 </nav>
 
 <main>
@@ -205,6 +206,50 @@
         <p class="scorenote" id="insight" style="margin-top:.6rem;font-weight:600"></p>
       </div>
     </aside>
+  </section>
+
+  <section class="paper-view" id="paper-view" hidden>
+    <div class="paper-head">
+      <p class="eyebrow">Paper — WORLDS at IROS 2026</p>
+      <h2>Modeling What Changes: Sparse, Residual World Models for Object-Centric Manipulation</h2>
+      <div class="authors">
+        <div class="author"><strong>Param Thakkar</strong><span>Veermata Jijabai Technological Institute</span><a href="mailto:puthakkar_b22@ce.vjti.ac.in">puthakkar_b22@ce.vjti.ac.in</a></div>
+        <div class="author"><strong>Parsika Paresh Shah</strong><span>Arizona State University</span><a href="mailto:pshah144@asu.edu">pshah144@asu.edu</a></div>
+        <div class="author"><strong>Manisha Sushant Gote</strong><span>Zuigo Private Limited</span><a href="mailto:manisha@zuigo.ai">manisha@zuigo.ai</a></div>
+      </div>
+      <div class="paper-actions">
+        <a class="chip" href="https://github.com/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">Code</a>
+        <a class="chip ghost" href="https://huggingface.co/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">Checkpoints</a>
+        <a class="chip" href="IEEE_Conference_Template/conference_101719.pdf" target="_blank" rel="noopener">PDF</a>
+      </div>
+    </div>
+    <div class="paper-grid">
+      <article class="paper-card">
+        <h3>Abstract</h3>
+        <p>Monolithic world models predict the entire next state at every step, spending capacity re-predicting the static majority and injecting error into it. We ask whether explicitly modeling what changes — a per-object change gate plus a residual delta head that perturbs only gated objects, copying the rest verbatim — is a more effective and interpretable bias.</p>
+        <p>On a MuJoCo tabletop pushing benchmark (3 to 8 objects), the sparse residual model is 2.5 to 4.6 times more accurate than a dense MLP at 8.6 to 11.1 times fewer parameters overall, but the durable win is error suppression on the static majority (F1 0.80 to 0.87, precision 0.92 to 0.97) with delta regression at roughly no-op quality, not accurate dynamics on movers. The gate transfers across counts (99.4 percent F1 retention), is more sample efficient, and when featurized for planner-visited states, sparse reaches 0.23 plus minus 0.06 success versus random 0.15 and dense 0.00 at every seed.</p>
+      </article>
+      <article class="paper-card">
+        <h3>Why this page exists</h3>
+        <p>The gate looks strong on overall L2, but most frames are trivially static. This demo scores only frames where something moved more than 2 cm and focuses on <strong>onset F1</strong> — did you predict the hit on a box at rest? That is where <code>nearest_to_pusher</code> and <code>already_moving</code> expose the shortcut.</p>
+        <ul>
+          <li><strong>Sandbox</strong> — live physics, live scoring against 11 rules</li>
+          <li><strong>4 Engines</strong> — same shortcut on MuJoCo, Box2D, Chipmunk</li>
+          <li><strong>More Boxes</strong> — same weights on 2 to 12 objects</li>
+          <li><strong>Make It Plan</strong> — model as forward simulator for CEM</li>
+        </ul>
+      </article>
+      <article class="paper-card">
+        <h3>Method at a glance</h3>
+        <p>Per object: shared gate network outputs a binary decision g, delta head outputs residual delta. Prediction is <code>p_next = p + g * delta</code>. Objects the gate leaves off are copied verbatim, so no injection. Train with class-balanced BCE on the gate, L2 on deltas only for changed objects, plus sparsity penalty.</p>
+        <p class="hint">Fig 1 in the paper shows the per-object head with weights shared across objects, independent of object count.</p>
+      </article>
+      <article class="paper-card">
+        <h3>Cite and reproduce</h3>
+        <p><code>bash experiments/run_count_seeds.sh 3</code> reproduces prediction and rollout tables. Audit any npz with <code>python -m experiments.audit_battery --test yours.npz --val yours.npz</code>. Weights match PyTorch to 1e-4 in <code>tests/test_web_export.py</code>.</p>
+        <p class="hint">Code, data generators, checkpoints and result tables at the GitHub and Hugging Face links above.</p>
+      </article>
+    </div>
   </section>
 
   <section class="explainer">

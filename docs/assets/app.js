@@ -32,6 +32,11 @@ const TASKS = {
     copy: 'CEM planner imagines futures with the model. With the true simulator it never fails, so failures equal model error.',
     hint: 'Paper: sparse 0.25 vs dense 0.00, PETS beats both at 0.35.',
   },
+  paper: {
+    title: 'Paper — neat summary and authors',
+    copy: 'Modeling What Changes: Sparse, Residual World Models for Object-Centric Manipulation. Read the abstract, authors and how this demo ties to the paper.',
+    hint: 'Use the links above for code, checkpoints and PDF. See the four demo tabs for live evidence.',
+  },
 };
 
 const state = {
@@ -451,7 +456,7 @@ function frame(timestamp) {
     fpsLast = timestamp; fpsCount = 0;
   }
   const stepMs = BASE_STEP_MS / state.speed;
-  if (state.running && timestamp - lastStep > stepMs) {
+  if (state.task !== 'paper' && state.running && timestamp - lastStep > stepMs) {
     lastStep = timestamp;
     try {
       if (state.task === 'replay') stepReplay();
@@ -541,11 +546,17 @@ function selectTask(task) {
   const info = TASKS[task];
   taskCopy.innerHTML = `<h2>${info.title}</h2><p>${info.copy}</p>`;
   hintEl.textContent = info.hint;
+  const paperView=document.getElementById('paper-view'); const stage=document.querySelector('.stage'); const explainer=document.querySelector('.explainer');
+  const isPaper=task==='paper';
+  if(paperView) paperView.hidden=!isPaper;
+  if(stage) stage.hidden=isPaper;
+  if(explainer) explainer.hidden=isPaper;
   document.getElementById('count-row').hidden = task !== 'transfer';
   document.getElementById('episode-row').hidden = task !== 'replay';
-  document.getElementById('drive-row').hidden = task === 'replay' || task === 'planning';
-  document.getElementById('keys-hint').hidden = state.drive !== 'keys';
+  document.getElementById('drive-row').hidden = task === 'replay' || task === 'planning' || isPaper;
+  document.getElementById('keys-hint').hidden = state.drive !== 'keys' || isPaper;
   state.planSuccess = 0; state.planAttempts = 0;
+  if(isPaper){ pushUrlState(); return; }
   selectModel(task === 'replay' ? 'tabletop' : 'planar');
   newScene(); resetScores(); pushUrlState();
 }
@@ -734,7 +745,7 @@ async function main() {
     else if (e.key.toLowerCase() === 't') { state.showTrails = !state.showTrails; document.getElementById('check-trails').checked = state.showTrails; const b = document.getElementById('btn-trails'); if (b) b.setAttribute('aria-pressed', String(state.showTrails)); if (!state.showTrails) state.trails = []; }
     else if (e.key.toLowerCase() === 'p') { state.showProbs = !state.showProbs; const b = document.getElementById('btn-probs'); if (b) b.setAttribute('aria-pressed', String(state.showProbs)); }
     else if (e.key.toLowerCase() === 'g') { state.showGrid = !state.showGrid; document.getElementById('check-grid').checked = state.showGrid; }
-    else if (['1','2','3','4'].includes(e.key)) { const tasks = ['sandbox','replay','transfer','planning']; selectTask(tasks[Number(e.key)-1]); }
+    else if (['1','2','3','4','5'].includes(e.key)) { const tasks = ['sandbox','replay','transfer','planning','paper']; selectTask(tasks[Number(e.key)-1]); }
   });
   window.addEventListener('keyup', (e) => { state.keys[e.key] = false; });
   document.getElementById('theme-toggle').addEventListener('click', () => {

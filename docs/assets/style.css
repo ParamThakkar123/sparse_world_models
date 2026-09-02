@@ -126,6 +126,24 @@ td .rule-name{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;f
 .cards article.fun{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 7%,var(--surface)),color-mix(in srgb,var(--accent2) 7%,var(--surface)))}
 .cards h3{margin:0 0 .35rem;font-size:.95rem}
 .cards p{margin:0 0 .6rem;font-size:.86rem;color:var(--ink-soft)}
+.paper-view{margin-top:1rem;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.paper-view[hidden]{display:none !important}
+.paper-head{padding:1.2rem 1.2rem 1rem;border-bottom:1px solid var(--line);background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 6%,var(--surface)),color-mix(in srgb,var(--accent2) 6%,var(--surface)))}
+.paper-head h2{margin:.5rem 0 1rem;font-size:clamp(1.2rem,2.8vw,1.8rem);line-height:1.15}
+.authors{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin-bottom:.9rem}
+@media(max-width:760px){.authors{grid-template-columns:1fr}}
+.author{display:grid;gap:.15rem;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:.7rem .8rem}
+.author strong{font-size:.95rem}
+.author span{font-size:.82rem;color:var(--ink-soft)}
+.author a{font-size:.78rem;color:var(--accent);text-decoration:none}
+.author a:hover{text-decoration:underline}
+.paper-actions{display:flex;gap:.4rem;flex-wrap:wrap}
+.paper-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;padding:1rem 1.2rem 1.2rem}
+@media(max-width:860px){.paper-grid{grid-template-columns:1fr}}
+.paper-card{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:.9rem 1rem}
+.paper-card h3{margin:0 0 .4rem;font-size:.95rem}
+.paper-card p{margin:0 0 .6rem;font-size:.9rem;color:var(--ink-soft)}
+.paper-card ul{margin:.2rem 0 .4rem 1.1rem;font-size:.88rem;color:var(--ink-soft)}
 .footer-note{margin:1.6rem 0 3rem;font-size:.82rem;color:var(--ink-soft);border-top:1px solid var(--line);padding-top:1rem}
 .warn{margin:0;font-size:.8rem;color:var(--ink);background:color-mix(in srgb,var(--goal) 18%,transparent);border-left:3px solid var(--goal);border-radius:8px;padding:.5rem .7rem}
 .toast-stack{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);display:grid;gap:.5rem;z-index:50;pointer-events:none}
