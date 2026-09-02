@@ -73,6 +73,26 @@ const scoresBody = document.querySelector('#scores tbody');
 const framesEl = document.getElementById('frames');
 const taskCopy = document.getElementById('task-copy');
 const hintEl = document.getElementById('hint');
+const tourEl = document.getElementById('tour');
+const tourSteps = [
+  {title:'Push a box',text:'Drag on the canvas or pick Mouse or Keys. Dashed ghost is the AI prediction.'},
+  {title:'Watch the scoreboard',text:'Onset F1 counts resting boxes only. nearest_to_pusher has 0 params and still wins.'},
+  {title:'Break it',text:'Try a chain reaction: push one box into another, or set Boxes to 12.'},
+];
+let tourIdx = 0;
+function renderTour(){const t=document.getElementById('tour-title');const tx=document.getElementById('tour-text');const dots=document.getElementById('tour-dots');const nxt=document.getElementById('tour-next');if(!t||!tx||!dots||!nxt||!tourEl) return; t.textContent=tourSteps[tourIdx].title;tx.textContent=tourSteps[tourIdx].text;dots.innerHTML='';tourSteps.forEach((_,i)=>{const d=document.createElement('i');if(i===tourIdx) d.className='on';dots.appendChild(d)});nxt.textContent=tourIdx===tourSteps.length-1?'Lets play!':'Next';}
+function openTour(){if(!tourEl) return; tourIdx=0; renderTour(); tourEl.hidden=false; tourEl.style.display='grid';}
+function closeTour(){if(!tourEl) return; tourEl.hidden=true; tourEl.style.display='none'; try{localStorage.setItem('tourDone','1')}catch{} }
+(function initTourEarly(){
+  const ctaPlay=document.getElementById('cta-play');if(ctaPlay) ctaPlay.addEventListener('click',()=>{const s=document.getElementById('scene'); if(s) s.scrollIntoView({behavior:'smooth',block:'center'}); state.running=true; syncPlayButton(); toast('Go! Drag a box');});
+  const ctaTour=document.getElementById('cta-tour');if(ctaTour) ctaTour.addEventListener('click', openTour);
+  const tNext=document.getElementById('tour-next');if(tNext) tNext.addEventListener('click',()=>{if(tourIdx<tourSteps.length-1){tourIdx++;renderTour()}else{closeTour();toast('Have fun!');const s=document.getElementById('scene'); if(s) s.scrollIntoView({behavior:'smooth',block:'center'}); state.running=true; syncPlayButton();}});
+  const tClose=document.getElementById('tour-close');if(tClose) tClose.addEventListener('click', closeTour);
+  const tSkip=document.getElementById('tour-skip');if(tSkip) tSkip.addEventListener('click', closeTour);
+  if(tourEl) tourEl.addEventListener('click',(e)=>{if(e.target===tourEl) closeTour()});
+  document.querySelectorAll('.path').forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll('.path').forEach(x=>x.classList.remove('active'));b.classList.add('active');const p=b.dataset.path;if(p==='play'){const s=document.getElementById('scene'); if(s) s.scrollIntoView({behavior:'smooth'});}else if(p==='learn'){const s=document.getElementById('explain-strip'); if(s) s.scrollIntoView({behavior:'smooth'}); openTour();}else{const s=document.querySelector('.explainer'); if(s) s.scrollIntoView({behavior:'smooth'});}})});
+  const toggleStrip=document.getElementById('toggle-strip');if(toggleStrip) toggleStrip.addEventListener('click',()=>{const s=document.querySelector('.comic');const f=document.querySelector('.strip-foot');if(!s) return; const hid=s.hidden; s.hidden=!hid; if(f) f.hidden=!hid; toggleStrip.textContent=hid?'Hide':'Show';});
+})();
 
 function toCanvas(x, y) {
   const scale = canvas.width / (2 * WORLD_BOUND);
@@ -701,21 +721,7 @@ async function main() {
     else if (next === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
     else document.documentElement.removeAttribute('data-theme');
   });
-  const tourEl=document.getElementById('tour');const tourSteps=[
-    {title:'Push a box',text:'Drag on the canvas or pick Mouse or Keys. Dashed ghost is the AI prediction.'},
-    {title:'Watch the scoreboard',text:'Onset F1 counts resting boxes only. nearest_to_pusher has 0 params and still wins.'},
-    {title:'Break it',text:'Try a chain reaction: push one box into another, or set Boxes to 12.'},
-  ];let tourIdx=0;function renderTour(){document.getElementById('tour-title').textContent=tourSteps[tourIdx].title;document.getElementById('tour-text').textContent=tourSteps[tourIdx].text;const dots=document.getElementById('tour-dots');dots.innerHTML='';tourSteps.forEach((_,i)=>{const d=document.createElement('i');if(i===tourIdx)d.className='on';dots.appendChild(d)});document.getElementById('tour-next').textContent=tourIdx===tourSteps.length-1?'Lets play!':'Next';}
-  function openTour(){tourIdx=0;renderTour();tourEl.hidden=false}function closeTour(){tourEl.hidden=true;localStorage.setItem('tourDone','1')}
-  const ctaPlay=document.getElementById('cta-play');if(ctaPlay)ctaPlay.addEventListener('click',()=>{document.getElementById('scene').scrollIntoView({behavior:'smooth',block:'center'});state.running=true;syncPlayButton();toast('Go! Drag a box');});
-  const ctaTour=document.getElementById('cta-tour');if(ctaTour)ctaTour.addEventListener('click',openTour);
-  const tNext=document.getElementById('tour-next');if(tNext)tNext.addEventListener('click',()=>{if(tourIdx<tourSteps.length-1){tourIdx++;renderTour()}else{closeTour();toast('Have fun!');document.getElementById('scene').scrollIntoView({behavior:'smooth',block:'center'});state.running=true;syncPlayButton();}});
-  const tClose=document.getElementById('tour-close');if(tClose)tClose.addEventListener('click',closeTour);
-  const tSkip=document.getElementById('tour-skip');if(tSkip)tSkip.addEventListener('click',closeTour);
-  if(tourEl)tourEl.addEventListener('click',(e)=>{if(e.target===tourEl)closeTour()});
-  document.querySelectorAll('.path').forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll('.path').forEach(x=>x.classList.remove('active'));b.classList.add('active');const p=b.dataset.path;if(p==='play'){document.getElementById('scene').scrollIntoView({behavior:'smooth'});}else if(p==='learn'){document.getElementById('explain-strip').scrollIntoView({behavior:'smooth'});openTour();}else{document.querySelector('.explainer').scrollIntoView({behavior:'smooth'});}})});
-  const toggleStrip=document.getElementById('toggle-strip');if(toggleStrip)toggleStrip.addEventListener('click',()=>{const s=document.querySelector('.comic');const f=document.querySelector('.strip-foot');const hid=s.hidden; s.hidden=!hid; if(f)f.hidden=!hid; toggleStrip.textContent=hid?'Hide':'Show';});
-  if(!localStorage.getItem('tourDone')) setTimeout(openTour,900);
+  try{ if(!localStorage.getItem('tourDone')) setTimeout(openTour,900);}catch{}
   selectTask(state.task);
   syncPlayButton();
   state.sortBy='onset';renderScores();
