@@ -36,7 +36,7 @@
 %
 % Do NOT flip this back without re-reading the CFP verbatim on the day of submission.
 \newif\ifanonymous
-\anonymoustrue
+\anonymousfalse
 
 % RESTORED for submission (2026-08-07). The WORLDS @ IROS 2026 CFP invites "short papers
 % (4 pages + references, with an optional 2-page appendix)" -- the appendix is explicitly
@@ -71,7 +71,7 @@
 % set \releaseurl to the public repository URL. The footnote then switches itself to the
 % present tense automatically; the abstract sentence must be changed BY HAND to match --
 % search the abstract for "will be released upon publication".
-\newcommand{\releaseurl}{}
+\newcommand{\releaseurl}{https://github.com/ParamThakkar123/sparse_world_models}
 
 \title{Modeling What Changes: Sparse, Residual World Models\\ for Object-Centric Manipulation
 \thanks{Code, data generators, checkpoints, and machine-readable result tables
@@ -82,10 +82,14 @@
   \author{\IEEEauthorblockN{Anonymous Author(s)}
   \IEEEauthorblockA{Submission under double-blind review}}
 \else
-  \author{\IEEEauthorblockN{Param Thakkar\textsuperscript{1}, Parsika Paresh Shah\textsuperscript{2}, Manisha Sushant Gote\textsuperscript{3}}
-  \IEEEauthorblockA{\textsuperscript{1}Veermata Jijabai Technological Institute, \texttt{puthakkar\_b22@ce.vjti.ac.in} \quad
-  \textsuperscript{2}Arizona State University, \texttt{pshah144@asu.edu} \quad
-  \textsuperscript{3}Zuigo Private Limited, \texttt{manisha@zuigo.ai}}}
+  \author{\IEEEauthorblockN{Param Thakkar}
+  \IEEEauthorblockA{Veermata Jijabai Technological Institute\\\texttt{puthakkar\_b22@ce.vjti.ac.in}}
+  \and
+  \IEEEauthorblockN{Parsika Paresh Shah}
+  \IEEEauthorblockA{Arizona State University\\\texttt{pshah144@asu.edu}}
+  \and
+  \IEEEauthorblockN{Manisha Sushant Gote}
+  \IEEEauthorblockA{ZuiGO Private Limited\\\texttt{manisha@zuigo.ai}}}
 \fi
 
 \maketitle
@@ -111,7 +115,7 @@ horizon; we report the decomposition and a mover-only rollout to make this expli
 For planning, once featurized for planner-visited states, sparse is $0.23\pm0.06$
 success vs.\ random $0.15$ (weakest seed exactly 0.15) and dense $0.00$ at every
 seed: not significantly better than random, but separated from dense. Code, data
-generators, and checkpoints will be released upon publication.
+generators, and checkpoints are released at \url{https://github.com/ParamThakkar123/sparse_world_models}.
 \end{abstract}
 
 \begin{IEEEkeywords}
