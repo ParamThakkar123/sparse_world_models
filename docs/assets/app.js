@@ -12,36 +12,25 @@ const HF_BASES = [
 
 const TASKS = {
   sandbox: {
-    title: 'Sandbox: you drive, the model predicts',
-    copy: 'Live planar physics, running in this tab. Each frame the model outputs a gate '
-        + 'per object and a delta; the dashed outline is where it thinks each object will be. '
-        + 'Switch to mouse or keys and push objects yourself. The ground truth is created by you, '
-        + 'so nothing here is a recording.',
-    hint: 'Mouse: pusher follows cursor. Keys: arrows or WASD. Auto: scripted push to goal.',
+    title: 'Sandbox — you drive, you judge',
+    copy: 'Live physics! Drag with mouse or use arrows. <strong>Dashed = AI guess, Red ring = actually moved.</strong> '
+        + 'Can you make the AI right and the simple rule wrong?',
+    hint: 'Mouse: finger follows cursor. Keys: arrows or WASD. Auto: chases goal.',
   },
   replay: {
-    title: 'Four engines: MuJoCo, Box2D, Chipmunk2D, ours',
-    copy: 'MuJoCo, Box2D and Chipmunk cannot run in a browser, so these are recorded episodes '
-        + 'from the paper datasets, but the model is predicting on each frame live, and the '
-        + 'labels are the real ones. The shortcut existence condition holds on all four '
-        + 'engines: P(change | already moving) exceeds P(change | at rest) by 36 to 84x.',
-    hint: 'Watch already_moving climb on billiards, where objects roll for a long time after contact.',
+    title: 'Four engines — same trick everywhere',
+    copy: 'MuJoCo, Box2D and Chipmunk cannot run here, so these are recorded episodes, but <strong>live scoring</strong>. The same 1-line rule wins on all four. Billiards is the most fun — things keep rolling.',
+    hint: 'Watch already_moving dominate on billiards.',
   },
   transfer: {
-    title: 'Count transfer: one checkpoint, any number of objects',
-    copy: 'The same weights, trained on three object scenes, driving scenes with up to twelve. '
-        + 'The contact featurisation is fixed width, so nothing has to be retrained. Watch the '
-        + 'objects the gate leaves off: they are copied forward exactly, which is the one '
-        + 'architectural claim that survived proper baselines.',
-    hint: 'Turn the count up. The trivial rules degrade too, but they degrade more slowly.',
+    title: 'More boxes — does the trick survive?',
+    copy: 'Same weights (trained on 3) driving up to 12 boxes. <strong>Watch still boxes:</strong> AI copies them perfectly, so zero drift. That is its real strength.',
+    hint: 'Slide boxes to 12 — who degrades slower?',
   },
   planning: {
-    title: 'Planning: the model as a forward simulator',
-    copy: 'Sampling based MPC (CEM), replanning every step, using the model to imagine each '
-        + 'candidate action sequence. The planner is sound: with the true simulator in place of '
-        + 'the model it succeeds every time. Anything it fails to do here is model quality.',
-    hint: 'In the paper this reaches 0.25 success against a dense monolith at 0.00, and a '
-        + 'published probabilistic ensemble (PETS) beats it at 0.35.',
+    title: 'Make it plan — AI as imagination',
+    copy: 'CEM planner imagines futures with the model. With the true simulator it never fails, so failures equal model error.',
+    hint: 'Paper: sparse 0.25 vs dense 0.00, PETS beats both at 0.35.',
   },
 };
 
@@ -442,20 +431,30 @@ function frame(timestamp) {
   }
   requestAnimationFrame(frame);
 }
+function toast(msg){const s=document.getElementById('toasts');if(!s)return;const t=document.createElement('div');t.className='toast';t.textContent=msg;s.appendChild(t);setTimeout(()=>t.remove(),2200)}
+function burstConfetti(){const c=document.getElementById('confetti');if(!c)return;for(let i=0;i<18;i++){const el=document.createElement('i');el.style.left=Math.random()*100+'vw';el.style.top='-10px';el.style.background=['#ff5a2b','#7c5cff','#f5b400','#0e9b8b'][i%4];el.style.transform=`rotate(${Math.random()*360}deg)`;el.style.animationDelay=Math.random()*0.3+'s';c.appendChild(el);setTimeout(()=>el.remove(),1400)}}
+const challenges={push:false,chain:false,trick:false};let lastTrickFrame=-999;let insightCooldown=0;
+function updateChallenges(){const any=state.lastTruth&&state.lastPrediction;if(!any)return;const truth=state.lastTruth;const moved=truth.some(v=>v===1);const twoMoved=truth.filter(v=>v===1).length>=2;if(moved&&!challenges.push){challenges.push=true;document.querySelector('[data-ch="push"]').checked=true;toast('First push! You moved a box');}
+if(twoMoved&&!challenges.chain){challenges.chain=true;document.querySelector('[data-ch="chain"]').checked=true;toast('Chain reaction! Box hit box');burstConfetti();}
+const rows=state.scoreboard.rows();const best=rows.find(r=>!r.isModel);const model=rows.find(r=>r.isModel);if(best&&model&&model.onsetF1+1e-9<best.onsetF1&&!challenges.trick&&state.frames>12&&state.seenFrames-lastTrickFrame>30){challenges.trick=true;document.querySelector('[data-ch="trick"]').checked=true;toast(`${best.name} beat AI on onset`);burstConfetti();lastTrickFrame=state.seenFrames;}
+document.getElementById('ch-progress').textContent=`${Object.values(challenges).filter(Boolean).length}/3`;if(Object.values(challenges).every(Boolean)&&insightCooldown===0){insightCooldown=1;toast('All challenges done — you get it! Now try More Boxes');}}
 function updateStatus() {
+  updateChallenges();
+  const insight=document.getElementById('insight');
   if (state.task === 'planning' && state.planAttempts > 0) {
     const rate = (state.planSuccess / state.planAttempts).toFixed(2);
-    statusEl.textContent = `Planning through the model: ${state.planSuccess}/${state.planAttempts} episodes solved (success ${rate}). The paper reports 0.25 at 20 episodes; a handful of browser episodes is not a measurement.`;
+    statusEl.textContent = `Planning: ${state.planSuccess}/${state.planAttempts} solved (rate ${rate}) — paper says 0.25, PETS 0.35.`;
+    if(insight) insight.textContent='';
     return;
   }
   const rows = state.scoreboard.rows();
   const best = rows.find((row) => !row.isModel);
   const model = rows.find((row) => row.isModel);
-  if (!best || !model || state.frames < 15) { statusEl.textContent = 'Collecting frames…'; return; }
-  const margin = model.f1 - best.f1;
-  statusEl.textContent = margin <= 0
-    ? `Best trivial rule: ${best.name} (${best.parameters} params) at F1 ${best.f1.toFixed(3)}, beating the trained model by ${(-margin).toFixed(3)}.`
-    : `The model leads ${best.name} by ${margin.toFixed(3)} F1 on this scene.`;
+  if (!best || !model || state.frames < 15) { statusEl.textContent = 'Collecting frames — push something!'; if(insight) insight.textContent=''; return; }
+  const mOn= model.onsetF1, bOn=best.onsetF1;
+  const margin = mOn - bOn;
+  if(margin <= 0){ statusEl.textContent = `${best.name} (0 params) beats AI on onset ${bOn.toFixed(3)} vs ${mOn.toFixed(3)} — by ${(-margin).toFixed(3)}.`; if(insight) insight.textContent='That is the point: "nearest to finger" predicts contact. Try a chain reaction to confuse it.';}
+  else { statusEl.textContent = `AI leads ${best.name} by ${margin.toFixed(3)} on onset — rare! Keep playing, can you flip it?`; if(insight) insight.textContent='AI is ahead on this scene — try More Boxes or a chain hit.'; }
 }
 function updateInspector() {
   const el = document.getElementById('inspector');
@@ -702,8 +701,24 @@ async function main() {
     else if (next === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
     else document.documentElement.removeAttribute('data-theme');
   });
+  const tourEl=document.getElementById('tour');const tourSteps=[
+    {title:'Push a box',text:'Drag on the canvas or pick Mouse or Keys. Dashed ghost is the AI prediction.'},
+    {title:'Watch the scoreboard',text:'Onset F1 counts resting boxes only. nearest_to_pusher has 0 params and still wins.'},
+    {title:'Break it',text:'Try a chain reaction: push one box into another, or set Boxes to 12.'},
+  ];let tourIdx=0;function renderTour(){document.getElementById('tour-title').textContent=tourSteps[tourIdx].title;document.getElementById('tour-text').textContent=tourSteps[tourIdx].text;const dots=document.getElementById('tour-dots');dots.innerHTML='';tourSteps.forEach((_,i)=>{const d=document.createElement('i');if(i===tourIdx)d.className='on';dots.appendChild(d)});document.getElementById('tour-next').textContent=tourIdx===tourSteps.length-1?'Lets play!':'Next';}
+  function openTour(){tourIdx=0;renderTour();tourEl.hidden=false}function closeTour(){tourEl.hidden=true;localStorage.setItem('tourDone','1')}
+  const ctaPlay=document.getElementById('cta-play');if(ctaPlay)ctaPlay.addEventListener('click',()=>{document.getElementById('scene').scrollIntoView({behavior:'smooth',block:'center'});state.running=true;syncPlayButton();toast('Go! Drag a box');});
+  const ctaTour=document.getElementById('cta-tour');if(ctaTour)ctaTour.addEventListener('click',openTour);
+  const tNext=document.getElementById('tour-next');if(tNext)tNext.addEventListener('click',()=>{if(tourIdx<tourSteps.length-1){tourIdx++;renderTour()}else{closeTour();toast('Have fun!')}});
+  const tClose=document.getElementById('tour-close');if(tClose)tClose.addEventListener('click',closeTour);
+  const tSkip=document.getElementById('tour-skip');if(tSkip)tSkip.addEventListener('click',closeTour);
+  if(tourEl)tourEl.addEventListener('click',(e)=>{if(e.target===tourEl)closeTour()});
+  document.querySelectorAll('.path').forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll('.path').forEach(x=>x.classList.remove('active'));b.classList.add('active');const p=b.dataset.path;if(p==='play'){document.getElementById('scene').scrollIntoView({behavior:'smooth'});}else if(p==='learn'){document.getElementById('explain-strip').scrollIntoView({behavior:'smooth'});openTour();}else{document.querySelector('.explainer').scrollIntoView({behavior:'smooth'});}})});
+  const toggleStrip=document.getElementById('toggle-strip');if(toggleStrip)toggleStrip.addEventListener('click',()=>{const s=document.querySelector('.comic');const f=document.querySelector('.strip-foot');const hid=s.hidden; s.hidden=!hid; if(f)f.hidden=!hid; toggleStrip.textContent=hid?'Hide':'Show';});
+  if(!localStorage.getItem('tourDone')) setTimeout(openTour,900);
   selectTask(state.task);
   syncPlayButton();
+  state.sortBy='onset';renderScores();
   requestAnimationFrame(frame);
 }
 main();

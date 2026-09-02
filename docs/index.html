@@ -3,38 +3,82 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Change-detection benchmarks are degenerate: live demo</title>
-<meta name="description" content="Run a trained object-centric world model in your browser and watch a zero-parameter rule beat it.">
-<meta name="theme-color" content="#14171a">
+<title>The 1-Line Rule That Beats AI — Play With It</title>
+<meta name="description" content="Push boxes, watch AI guess, watch a 0-parameter rule win. Live physics, real weights, in your browser.">
+<meta name="theme-color" content="#ff5a2b">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 
+<div class="confetti" id="confetti" aria-hidden="true"></div>
+<div class="toast-stack" id="toasts" aria-live="polite"></div>
+
 <header class="masthead">
   <div class="masthead-top">
-    <p class="eyebrow">Interactive demo &middot; object-centric world models</p>
+    <p class="eyebrow">Interactive paper — no install — runs in this tab</p>
     <div class="header-actions">
       <a class="chip" href="https://github.com/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">GitHub</a>
-      <a class="chip" href="https://huggingface.co/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">Checkpoints on HF</a>
+      <a class="chip ghost" href="https://huggingface.co/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">Checkpoints</a>
       <button class="chip" id="theme-toggle" type="button" aria-label="Toggle theme">Theme</button>
     </div>
   </div>
-  <h1>A one-line rule beats the model. Watch it happen.</h1>
-  <p class="standfirst">
-    Everything below runs in this tab: the <strong>actual trained weights</strong> from the
-    paper checkpoint, the physics, and the eleven trivial rules it is scored against. No
-    server, no video. If you would rather not take a table word for it, drive the scene
-    yourself and read the scoreboard.
-  </p>
+
+  <div class="hero">
+    <div class="hero-text">
+      <h1>A <span class="highlight">1-line rule</span> beats the AI.<br>Push a box and see.</h1>
+      <p class="standfirst">
+        This is not a video. It is the <strong>real trained model</strong> (<output id="param-count">…</output> params) running live in your browser, on live physics, scored against 11 simple rules every frame.
+        <strong>Your job:</strong> try to make the AI look smart.
+        <span class="muted">Spoiler — the simplest rule often wins.</span>
+      </p>
+      <div class="hero-cta">
+        <button class="btn big" id="cta-play">Play now — 10 sec</button>
+        <button class="btn" id="cta-tour">Take the 60-sec tour</button>
+        <span class="hint inline">No setup. Drag or use arrow keys.</span>
+      </div>
+      <div class="path-picker" role="group" aria-label="Choose your path">
+        <button class="path active" data-path="play">Just want fun</button>
+        <button class="path" data-path="learn">Want the idea</button>
+        <button class="path" data-path="audit">Want the proof</button>
+      </div>
+    </div>
+    <div class="hero-card" aria-hidden="true">
+      <div class="mini-score">
+        <div class="mini-head">Live scoreboard <span>onset F1</span></div>
+        <div class="mini-row wins"><span>nearest_to_pusher</span><span>0 params</span><span>0.961</span></div>
+        <div class="mini-row model"><span>the AI gate</span><span>~80k params</span><span>0.694</span></div>
+        <div class="mini-row"><span>already_moving</span><span>0 params</span><span>0.927</span></div>
+        <p>Zero dials. Zero training. Still winning. Try to flip it below.</p>
+      </div>
+      <div class="hero-illus">
+        <span class="blob box"></span><span class="blob pusher"></span><span class="blob arrow">-></span>
+      </div>
+    </div>
+  </div>
+
   <p class="loading" id="status" role="status" aria-live="polite">Loading model…</p>
   <div class="progress" id="progress" hidden><div class="bar" id="progress-bar"></div></div>
 </header>
 
-<nav class="tasks" id="tasks" aria-label="Choose a task">
-  <button data-task="sandbox" class="active">Sandbox</button>
-  <button data-task="replay">Four engines</button>
-  <button data-task="transfer">Count transfer</button>
-  <button data-task="planning">Planning</button>
+<section class="explain-strip" id="explain-strip">
+  <div class="strip-head">
+    <h2>How it works — in 20 seconds</h2>
+    <button class="small" id="toggle-strip">Hide</button>
+  </div>
+  <div class="comic">
+    <article><span class="num">1</span><h3>You push</h3><p>One finger-like pusher. Boxes slide, bump, chain-react.</p></article>
+    <article><span class="num">2</span><h3>AI guesses</h3><p>"Gate ON" means <em>I think this box will move next frame.</em> Dashed box is where it thinks it will be.</p></article>
+    <article><span class="num">3</span><h3>Simple ruler wins</h3><p><code>nearest_to_pusher</code>: <em>"whichever box is closest to finger moves."</em> That is it. No learning.</p></article>
+    <article><span class="num">4</span><h3>Scoreboard</h3><p><strong>Onset F1</strong> counts only boxes at rest. No free points for "still rolling, still rolling".</p></article>
+  </div>
+  <p class="strip-foot">Filter: only frames where <em>something moved more than 2 cm</em> count — otherwise 95 percent is finger wandering and nothing happens.</p>
+</section>
+
+<nav class="tasks" id="tasks" aria-label="Choose a playground">
+  <button data-task="sandbox" class="active">Sandbox <small>you drive</small></button>
+  <button data-task="replay">4 Engines <small>watch replays</small></button>
+  <button data-task="transfer">More Boxes <small>up to 12</small></button>
+  <button data-task="planning">Make It Plan <small>CEM</small></button>
 </nav>
 
 <main>
@@ -44,22 +88,29 @@
         <span class="toolbar-label" id="fps">60 fps</span>
         <div class="toolbar-actions">
           <button id="btn-step" title="Step one frame (.)">Step</button>
-          <button id="btn-trails" title="Toggle object trails (T)" aria-pressed="false">Trails</button>
-          <button id="btn-probs" title="Toggle gate probabilities (P)" aria-pressed="true">Probs</button>
+          <button id="btn-trails" title="Toggle trails (T)" aria-pressed="false">Trails</button>
+          <button id="btn-probs" title="Toggle probs (P)" aria-pressed="true">Probs</button>
           <button id="btn-screenshot" title="Save PNG">PNG</button>
         </div>
       </div>
       <canvas id="scene" width="720" height="720" aria-label="Simulation view"></canvas>
       <div class="inspector" id="inspector" hidden></div>
       <div class="canvas-legend">
-        <span><i class="swatch pusher"></i>pusher</span>
-        <span><i class="swatch gate-on"></i>gate ON</span>
-        <span><i class="swatch truth"></i>actually changed</span>
-        <span><i class="swatch ghost"></i>predicted next pose</span>
-        <span><i class="swatch goal"></i>goal</span>
-        <span class="legend-hint">Hover object for details. Drag or use arrows/WASD in keyboard mode.</span>
+        <span><i class="swatch pusher"></i> finger</span>
+        <span><i class="swatch gate-on"></i> AI says "will move"</span>
+        <span><i class="swatch truth"></i> actually moved</span>
+        <span><i class="swatch ghost"></i> AI ghost prediction</span>
+        <span><i class="swatch goal"></i> goal</span>
+        <span class="legend-hint">Hover a box — drag or arrows to push</span>
       </div>
-      <div class="overlay" id="paused-overlay" hidden>Paused. Press Play or hit Space.</div>
+      <div class="overlay" id="paused-overlay" hidden>Paused — press Space or Play</div>
+
+      <div class="challenges" id="challenges">
+        <h4>Try to break the rules <span id="ch-progress">0/3</span></h4>
+        <label><input type="checkbox" disabled data-ch="push"> Push any box</label>
+        <label><input type="checkbox" disabled data-ch="chain"> Make a chain reaction (box hits box)</label>
+        <label><input type="checkbox" disabled data-ch="trick"> Trick the AI: rule right, AI wrong</label>
+      </div>
     </div>
 
     <aside class="panel">
@@ -72,7 +123,7 @@
             <button id="play" class="primary">Pause</button>
             <button id="reset">New scene</button>
             <button id="step" title="Single frame">Step</button>
-            <button id="share" title="Copy link to this scene">Share</button>
+            <button id="share" title="Copy link">Share</button>
           </div>
           <div class="row">
             <label for="speed">Speed</label>
@@ -88,24 +139,25 @@
             <label><input type="radio" name="drive" value="mouse"> Mouse</label>
             <label><input type="radio" name="drive" value="keys"> Keys</label>
           </div>
-          <p class="hint" id="keys-hint" hidden>Keys: arrows or WASD to push, hold Shift for fine control.</p>
+          <p class="hint" id="keys-hint" hidden>Arrows or WASD to push, hold Shift for fine control</p>
         </div>
 
         <div class="control-group">
-          <h3>Rules and physics</h3>
+          <h3>Tweak the test</h3>
           <div class="row" id="count-row" hidden>
-            <label for="count">Objects</label>
+            <label for="count">Boxes</label>
             <input type="range" id="count" min="2" max="12" step="1" value="3">
             <output id="count-out">3</output>
           </div>
           <div class="row">
-            <label for="radius">Contact radius</label>
+            <label for="radius">Rule radius</label>
             <input type="range" id="radius" min="0.02" max="0.22" step="0.005" value="0.07">
             <output id="radius-out">0.070 m</output>
           </div>
+          <p class="hint tiny">Increase the radius and the rule says "nearer counts". See if any setting saves the AI. (It does not.)</p>
           <div class="row checks">
-            <label><input type="checkbox" id="check-trails"> Show trails</label>
-            <label><input type="checkbox" id="check-vel"> Velocity arrows</label>
+            <label><input type="checkbox" id="check-trails"> Trails</label>
+            <label><input type="checkbox" id="check-vel"> Arrows</label>
             <label><input type="checkbox" id="check-grid" checked> Grid</label>
           </div>
           <div class="row" id="episode-row" hidden>
@@ -118,33 +170,26 @@
         </div>
 
         <details class="shortcuts">
-          <summary>Keyboard shortcuts</summary>
+          <summary>Shortcuts</summary>
           <ul>
-            <li><code>Space</code> play or pause</li>
-            <li><code>R</code> new scene, <code>.</code> step one frame</li>
-            <li><code>T</code> trails, <code>P</code> probs, <code>G</code> grid</li>
-            <li><code>1</code> to <code>4</code> switch task</li>
+            <li><code>Space</code> play or pause, <code>R</code> new scene, <code>.</code> step one frame</li>
+            <li><code>T</code> trails, <code>P</code> probs, <code>G</code> grid, <code>1-4</code> switch task</li>
           </ul>
         </details>
       </div>
 
       <div class="scoreboard">
         <div class="scoreboard-head">
-          <h2>Live scoreboard</h2>
+          <h2>Live scoreboard <span class="badge">onset F1 is hard mode</span></h2>
           <span class="frames" id="frames">0 frames</span>
         </div>
         <p class="scorenote">
-          F1 over every frame since the last reset that passes the same
-          <code>--min-max-xy-delta 0.02</code> motion filter the paper benchmarks are built
-          with, computed exactly as <code>onset_shortcut_audit.py</code> does. Unfiltered, about 95
-          percent of steps are the pusher travelling with nothing happening, and no number would be
-          comparable to any number in the paper. <strong>Onset F1</strong> is the column that
-          matters: it scores only objects currently at rest, which can start moving only
-          through contact, so it measures prediction rather than continuation.
+          Scored like the paper — only frames where something moved more than 2 cm, same code as <code>onset_shortcut_audit.py</code>.
+          <strong>Onset F1</strong> is resting boxes only. That is the "did you predict the hit?" score. Hover a row for what the rule does.
         </p>
         <div class="score-actions">
           <button id="sort-f1" class="small">Sort by F1</button>
-          <button id="sort-onset" class="small">Sort by onset</button>
+          <button id="sort-onset" class="small active">Sort by onset</button>
           <button id="copy-scores" class="small">Copy CSV</button>
         </div>
         <table id="scores">
@@ -153,62 +198,55 @@
           </thead>
           <tbody></tbody>
         </table>
+        <p class="scorenote" id="insight" style="margin-top:.6rem;font-weight:600"></p>
       </div>
     </aside>
   </section>
 
   <section class="explainer">
-    <h2>What you are looking at</h2>
+    <h2>Want the full story? Pick your depth</h2>
     <div class="cards">
-      <article>
-        <h3>The model is real</h3>
-        <p>
-          The gate and delta head are exported straight from the paper checkpoints,
-          <output id="param-count">…</output> parameters, and the JavaScript forward pass is
-          checked against PyTorch to 1e-4 by <code>tests/test_web_export.py</code>. Two
-          checkpoints ship: the live sandbox runs the <strong>planar</strong> trained gate
-          because the sandbox is planar physics, and the replay tab runs the
-          <strong>tabletop</strong> trained one. Scoring a tabletop model on live planar
-          physics would put a domain shift on screen with nothing to label it.
-        </p>
+      <article class="card fun">
+        <h3>The playground idea</h3>
+        <p>One finger, a few boxes kept apart. The closest box to the finger is almost always the one that moves. One number — distance — tells you the answer. Filters just pick <em>which</em> number.</p>
+        <a class="chip" href="#tasks" onclick="document.querySelector('[data-task=sandbox]').click()">Try it</a>
       </article>
-      <article>
-        <h3>The rules have no parameters</h3>
-        <p>
-          <code>nearest_to_pusher</code> predicts change for the single object closest to the
-          pusher. Nothing is fitted. On the paper onset benchmark it scores F1 0.925 against
-          the learned gate at 0.694. The thresholded rules have exactly one parameter, and the
-          slider lets you check that no particular setting is doing the work.
-        </p>
+      <article class="card">
+        <h3>What the AI is actually good at</h3>
+        <p>Not detection — <strong>copying still boxes perfectly</strong>. Boxes the gate leaves OFF stay exactly put, so zero drift. Gap versus dense model grows with more boxes. Set boxes to 12 and watch.</p>
+        <a class="chip" href="#tasks" onclick="document.querySelector('[data-task=transfer]').click()">See transfer</a>
       </article>
-      <article>
-        <h3>Why it happens</h3>
-        <p>
-          With one point like pusher and objects kept apart, contact is spatially unambiguous:
-          the pusher is near at most one object and that object is the one that moves. The
-          label is recoverable from a single scalar. Three successive benchmarks each removed
-          one such scalar and were promptly won by the next.
-        </p>
+      <article class="card">
+        <h3>Audit any benchmark in 1 command</h3>
+        <p><code>python -m experiments.audit_battery --test yours.npz --val yours.npz</code><br>11 rules, fitted on val, applied to test. Verdict: <code>DEGENERATE / MARGINAL / SURVIVES</code>.</p>
+        <a class="chip" href="https://github.com/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">Get code</a>
       </article>
-      <article>
-        <h3>What still stands</h3>
-        <p>
-          The gate real advantage is not detection but <em>error suppression</em>: objects it
-          leaves off are copied forward exactly, so they accumulate no error, and the gap over
-          a dense monolith grows with object count. Turn the object count up on the
-          <strong>Count transfer</strong> task and watch the untouched objects stay put.
-        </p>
+      <article class="card">
+        <h3>Paper gotchas (we document failures)</h3>
+        <p>Three claims refuted by proper baselines. Leaky splits (25 percent episode overlap) fixed via <code>build_clean_splits.py</code>. <code>experiments/RESULTS.md</code> is the source of truth.</p>
+        <a class="chip" href="https://github.com/ParamThakkar123/sparse_world_models/blob/main/experiments/RESULTS.md" target="_blank" rel="noopener">Read RESULTS</a>
       </article>
     </div>
     <p class="footer-note">
-      Full results, including the three claims of ours that proper baselines refuted, are in
-      <code>experiments/RESULTS.md</code>. The audit battery runs on any benchmark:
-      <code>python -m experiments.audit_battery --test yours_test.npz --val yours_val.npz</code>.
-      Weights and full checkpoints are on <a href="https://huggingface.co/ParamThakkar123/sparse_world_models">Hugging Face</a>
-      and also in <code>docs/assets/model.json</code> for offline use.
+      Built for skeptics. Everything verifiable: weights in <code>docs/assets/model.json</code> — JS matches PyTorch to 1e-4 (<code>tests/test_web_export.py</code>) — Repro: <code>bash experiments/run_count_seeds.sh 3</code>.
+      Anonymous PDF links omitted per <code>SUBMISSION_RUNBOOK.md</code>.
     </p>
   </section>
 </main>
+
+<div class="tour" id="tour" hidden>
+  <div class="tour-card">
+    <button class="x" id="tour-close" aria-label="Close">x</button>
+    <p class="eyebrow">60 second tour</p>
+    <h3 id="tour-title">Push a box</h3>
+    <p id="tour-text">Drag on the table or use Auto. Watch the dashed ghost versus the solid box.</p>
+    <div class="tour-dots" id="tour-dots"></div>
+    <div class="row" style="justify-content:space-between">
+      <button class="small" id="tour-skip">Skip</button>
+      <button class="primary" id="tour-next">Next</button>
+    </div>
+  </div>
+</div>
 
 <script type="module" src="assets/app.js"></script>
 </body>
