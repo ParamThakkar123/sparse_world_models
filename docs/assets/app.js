@@ -13,29 +13,29 @@ const HF_BASES = [
 const TASKS = {
   sandbox: {
     title: 'Sandbox — you drive, you judge',
-    copy: 'Live physics! Drag with mouse or use arrows. <strong>Dashed = AI guess, Red ring = actually moved.</strong> '
-        + 'Can you make the AI right and the simple rule wrong?',
-    hint: 'Mouse: finger follows cursor. Keys: arrows or WASD. Auto: chases goal.',
+    copy: 'Live physics. Drag on the table or use the arrows. <strong>Dashed outline is the model’s guess, red ring is what actually moved.</strong> '
+        + 'Can you find a push where the model is right and the simple rule is wrong?',
+    hint: 'Mouse: the finger follows your cursor. Keys: arrows or WASD. Auto: it chases the goal.',
   },
   replay: {
-    title: 'Four engines — same trick everywhere',
-    copy: 'MuJoCo, Box2D and Chipmunk cannot run here, so these are recorded episodes, but <strong>live scoring</strong>. The same 1-line rule wins on all four. Billiards is the most fun — things keep rolling.',
-    hint: 'Watch already_moving dominate on billiards.',
+    title: 'Four engines — the same shortcut everywhere',
+    copy: 'MuJoCo, Box2D and Chipmunk cannot run in a browser, so these are recorded episodes — but the <strong>scoring is live</strong>. The same one-line rule wins on all four. Billiards is the liveliest: things keep rolling.',
+    hint: 'Watch already_moving take over on billiards, where motion persists.',
   },
   transfer: {
-    title: 'More boxes — does the trick survive?',
-    copy: 'Same weights (trained on 3) driving up to 12 boxes. <strong>Watch still boxes:</strong> AI copies them perfectly, so zero drift. That is its real strength.',
-    hint: 'Slide boxes to 12 — who degrades slower?',
+    title: 'More boxes — does it survive the count?',
+    copy: 'One checkpoint, trained on three objects, driving up to twelve. <strong>Watch the still boxes:</strong> the gate leaves them off, so they are copied exactly and cannot drift. That is the model’s real strength.',
+    hint: 'Push the slider to 12 — who degrades more slowly?',
   },
   planning: {
-    title: 'Make it plan — AI as imagination',
-    copy: 'CEM planner imagines futures with the model. With the true simulator it never fails, so failures equal model error.',
-    hint: 'Paper: sparse 0.25 vs dense 0.00, PETS beats both at 0.35.',
+    title: 'Planning — the model as imagination',
+    copy: 'A CEM planner imagines futures through the model and picks the best push. Given the true simulator it never fails, so every failure here is model error.',
+    hint: 'Paper: sparse 0.23 ± 0.06 success, random 0.15, dense 0.00 at every seed.',
   },
   paper: {
-    title: 'Paper — neat summary and authors',
-    copy: 'Modeling What Changes: Sparse, Residual World Models for Object-Centric Manipulation. Read the abstract, authors and how this demo ties to the paper.',
-    hint: 'Use the links above for code, checkpoints and PDF. See the four demo tabs for live evidence.',
+    title: 'The paper behind this page',
+    copy: 'Modeling What Changes: Sparse, Residual World Models for Object-Centric Manipulation — accepted at the WORLDS workshop, IROS 2026. Abstract, authors, what holds up and what does not.',
+    hint: 'Links above for code, checkpoints and result tables. The other four tabs are the live evidence.',
   },
 };
 
@@ -274,16 +274,25 @@ function renderScores() {
   let rows = state.scoreboard.rows();
   if (state.sortBy === 'onset') rows = [...rows].sort((a, b) => b.onsetF1 - a.onsetF1 || b.f1 - a.f1);
   scoresBody.innerHTML = '';
+  const leader = rows.reduce((best, row) => {
+    const score = state.sortBy === 'onset' ? (row.support ? row.onsetF1 : -1) : row.f1;
+    const bestScore = best ? (state.sortBy === 'onset' ? (best.support ? best.onsetF1 : -1) : best.f1) : -1;
+    return score > bestScore ? row : best;
+  }, null);
   for (const row of rows) {
     const tr = document.createElement('tr');
-    if (row.isModel) tr.className = 'model';
-    else if (row.parameters === 0) tr.className = 'zero-param';
+    const classes = [];
+    if (row.isModel) classes.push('model');
+    else if (row.parameters === 0) classes.push('zero-param');
+    if (row === leader) classes.push('leader');
+    tr.className = classes.join(' ');
     const label = row.isModel ? 'the trained model' : row.name;
+    const meter = (value) => `<span class="meter" aria-hidden="true"><i style="width:${Math.max(0, Math.min(1, value)) * 100}%"></i></span>`;
     tr.innerHTML =
       `<td><span class="rule-name">${label}</span></td>` +
       `<td>${row.isModel ? state.model.weights.num_parameters.toLocaleString() : row.parameters}</td>` +
-      `<td>${row.f1.toFixed(3)}</td>` +
-      `<td>${row.support ? row.onsetF1.toFixed(3) : '-'}</td>`;
+      `<td class="metric">${row.f1.toFixed(3)}${meter(row.f1)}</td>` +
+      `<td class="metric">${row.support ? row.onsetF1.toFixed(3) + meter(row.onsetF1) : '-'}</td>`;
     if (!row.isModel && RULE_DESCRIPTIONS[row.name]) tr.title = RULE_DESCRIPTIONS[row.name];
     scoresBody.appendChild(tr);
   }
@@ -484,7 +493,7 @@ function updateStatus() {
   const insight=document.getElementById('insight');
   if (state.task === 'planning' && state.planAttempts > 0) {
     const rate = (state.planSuccess / state.planAttempts).toFixed(2);
-    statusEl.textContent = `Planning: ${state.planSuccess}/${state.planAttempts} solved (rate ${rate}) — paper says 0.25, PETS 0.35.`;
+    statusEl.textContent = `Planning: ${state.planSuccess}/${state.planAttempts} solved (rate ${rate}) — paper reports 0.23 ± 0.06, random 0.15, dense 0.00.`;
     if(insight) insight.textContent='';
     return;
   }
@@ -542,18 +551,26 @@ function renderDomainNotice() {
 }
 function selectTask(task) {
   state.task = task;
-  document.querySelectorAll('.tasks button').forEach((button) => { button.classList.toggle('active', button.dataset.task === task); });
+  document.querySelectorAll('.tasks button').forEach((button) => {
+    const on = button.dataset.task === task;
+    button.classList.toggle('active', on);
+    button.setAttribute('aria-selected', String(on));
+  });
   const info = TASKS[task];
   taskCopy.innerHTML = `<h2>${info.title}</h2><p>${info.copy}</p>`;
   hintEl.textContent = info.hint;
-  const paperView=document.getElementById('paper-view'); const stage=document.querySelector('.stage'); const explainer=document.querySelector('.explainer');
+  const paperView=document.getElementById('paper-view'); const stage=document.querySelector('.stage');
+  const explainer=document.querySelector('.explainer'); const strip=document.getElementById('explain-strip');
   const isPaper=task==='paper';
   if(paperView) paperView.hidden=!isPaper;
   if(stage) stage.hidden=isPaper;
   if(explainer) explainer.hidden=isPaper;
+  if(strip) strip.hidden=isPaper;
+  const statusLine=document.querySelector('.status-line'); if(statusLine) statusLine.hidden=isPaper;
   document.getElementById('count-row').hidden = task !== 'transfer';
   document.getElementById('episode-row').hidden = task !== 'replay';
-  document.getElementById('drive-row').hidden = task === 'replay' || task === 'planning' || isPaper;
+  const driveGroup = document.getElementById('drive-group');
+  if (driveGroup) driveGroup.hidden = task === 'replay' || task === 'planning' || isPaper;
   document.getElementById('keys-hint').hidden = state.drive !== 'keys' || isPaper;
   state.planSuccess = 0; state.planAttempts = 0;
   if(isPaper){ pushUrlState(); return; }
@@ -706,8 +723,16 @@ async function main() {
   document.getElementById('btn-screenshot').addEventListener('click', () => {
     const a = document.createElement('a'); a.download = `demo-${state.task}-${Date.now()}.png`; a.href = canvas.toDataURL('image/png'); a.click();
   });
-  document.getElementById('sort-f1').addEventListener('click', () => { state.sortBy = 'f1'; renderScores(); });
-  document.getElementById('sort-onset').addEventListener('click', () => { state.sortBy = 'onset'; renderScores(); });
+  const sortF1 = document.getElementById('sort-f1');
+  const sortOnset = document.getElementById('sort-onset');
+  const setSort = (mode) => {
+    state.sortBy = mode;
+    sortF1.classList.toggle('active', mode === 'f1');
+    sortOnset.classList.toggle('active', mode === 'onset');
+    renderScores();
+  };
+  sortF1.addEventListener('click', () => setSort('f1'));
+  sortOnset.addEventListener('click', () => setSort('onset'));
   document.getElementById('copy-scores').addEventListener('click', async () => {
     const rows = state.scoreboard.rows(); const csv = ['rule,params,f1,onsetF1'].concat(rows.map(r => `${r.name},${r.isModel ? state.model.weights.num_parameters : r.parameters},${r.f1.toFixed(3)},${r.support ? r.onsetF1.toFixed(3) : ''}`)).join('\n');
     try { await navigator.clipboard.writeText(csv); statusEl.textContent = 'Scores copied as CSV.'; setTimeout(updateStatus, 1500); } catch { statusEl.textContent = csv.slice(0, 80); }
@@ -748,17 +773,39 @@ async function main() {
     else if (['1','2','3','4','5'].includes(e.key)) { const tasks = ['sandbox','replay','transfer','planning','paper']; selectTask(tasks[Number(e.key)-1]); }
   });
   window.addEventListener('keyup', (e) => { state.keys[e.key] = false; });
-  document.getElementById('theme-toggle').addEventListener('click', () => {
-    const cur = document.documentElement.getAttribute('data-theme');
-    const next = cur === 'light' ? 'dark' : cur === 'dark' ? 'light' : (matchMedia('(prefers-color-scheme: dark)').matches ? 'light' : 'dark');
-    if (next === 'light') document.documentElement.setAttribute('data-theme', 'light');
-    else if (next === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
-    else document.documentElement.removeAttribute('data-theme');
+  const themeToggle = document.getElementById('theme-toggle');
+  const syncThemeLabel = () => {
+    const cur = document.documentElement.getAttribute('data-theme')
+      || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    themeToggle.title = cur === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+    themeToggle.setAttribute('aria-label', themeToggle.title);
+    themeToggle.firstElementChild.textContent = cur === 'dark' ? '☀' : '☾';
+  };
+  syncThemeLabel();
+  themeToggle.addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme')
+      || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch {}
+    syncThemeLabel();
+  });
+  const goToTask = (task) => {
+    selectTask(task);
+    const anchor = task === 'paper' ? document.getElementById('paper-view') : document.querySelector('.stage');
+    if (anchor) anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  document.querySelectorAll('[data-goto-paper]').forEach((el) => el.addEventListener('click', () => goToTask('paper')));
+  document.querySelectorAll('[data-jump]').forEach((el) => el.addEventListener('click', () => goToTask(el.dataset.jump)));
+  const bibtexBtn = document.getElementById('copy-bibtex');
+  if (bibtexBtn) bibtexBtn.addEventListener('click', async () => {
+    const text = document.getElementById('bibtex').textContent;
+    try { await navigator.clipboard.writeText(text); toast('BibTeX copied'); } catch { toast('Copy failed — select the block instead'); }
   });
   try{ if(!localStorage.getItem('tourDone')) setTimeout(openTour,900);}catch{}
   selectTask(state.task);
   syncPlayButton();
-  state.sortBy='onset';renderScores();
+  setSort('onset');
   requestAnimationFrame(frame);
 }
 main();

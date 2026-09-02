@@ -3,86 +3,74 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The 1-Line Rule That Beats AI — Play With It</title>
-<meta name="description" content="Push boxes, watch AI guess, watch a 0-parameter rule win. Live physics, real weights, in your browser.">
+<title>Sparse World Models — a zero-parameter rule beats the model</title>
+<meta name="description" content="Push boxes in live physics, watch the trained world model guess, watch an eleven-rule battery of trivial baselines out-score it. Real weights, in your browser.">
 <meta name="theme-color" content="#ff5a2b">
 <link rel="preload" href="assets/model.json" as="fetch" crossorigin>
 <link rel="preload" href="assets/episodes.json" as="fetch" crossorigin>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2316181d'/%3E%3Ccircle cx='22' cy='22' r='5.5' fill='%23ff5a2b'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css">
+<script>try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 </head>
 <body>
-<a href="#scene" class="skip-link">Skip to demo</a>
+<a href="#scene" class="skip-link">Skip to the demo</a>
 <div class="confetti" id="confetti" aria-hidden="true"></div>
 <div class="toast-stack" id="toasts" aria-live="polite"></div>
 <div id="tooltip" role="tooltip" hidden></div>
 
-<header class="masthead">
-  <div class="masthead-top">
-    <p class="eyebrow">Interactive paper — no install — runs in this tab</p>
-    <div class="header-actions">
-      <a class="chip" href="https://github.com/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">GitHub</a>
-      <a class="chip ghost" href="https://huggingface.co/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">Checkpoints</a>
-      <button class="chip" id="theme-toggle" type="button" aria-label="Toggle theme">Theme</button>
-    </div>
+<header class="masthead" id="top">
+  <div class="bar">
+    <a class="wordmark" href="#top">
+      <span class="mark" aria-hidden="true"></span>
+      <span class="wordmark-text">Sparse World Models<small>live demo · WORLDS @ IROS 2026</small></span>
+    </a>
+    <nav class="bar-links" aria-label="Project links">
+      <button class="chip" data-goto-paper type="button">Paper</button>
+      <a class="chip" href="https://github.com/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">Code</a>
+      <a class="chip" href="https://huggingface.co/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">Checkpoints</a>
+      <button class="chip icon" id="theme-toggle" type="button" aria-label="Switch colour theme" title="Switch colour theme"><span aria-hidden="true">◐</span></button>
+    </nav>
   </div>
 
   <div class="hero">
     <div class="hero-text">
-      <h1>A <span class="highlight">1-line rule</span> beats the AI.<br>Push a box and see.</h1>
+      <p class="eyebrow">Interactive paper — nothing to install, it runs in this tab</p>
+      <h1>A rule with <span class="highlight">zero parameters</span> beats the world model.</h1>
       <p class="standfirst">
-        This is not a video. It is the <strong>real trained model</strong> (<output id="param-count">…</output> params) running live in your browser, on live physics, scored against 11 simple rules every frame.
-        <strong>Your job:</strong> try to make the AI look smart.
-        <span class="muted">Spoiler — the simplest rule often wins.</span>
+        This is not a video. The <strong>real trained checkpoint</strong> (<output id="param-count">…</output> parameters)
+        runs live on live physics, scored frame by frame against eleven trivial rules — the same audit battery as the paper.
+        <strong>Your job: make the model look smart.</strong>
       </p>
       <div class="hero-cta">
-        <button class="btn big" id="cta-play">Play now — 10 sec</button>
-        <button class="btn" id="cta-tour">Take the 60-sec tour</button>
-        <span class="hint inline">No setup. Drag or use arrow keys.</span>
-      </div>
-      <div class="path-picker" role="group" aria-label="Choose your path">
-        <button class="path active" data-path="play">Just want fun</button>
-        <button class="path" data-path="learn">Want the idea</button>
-        <button class="path" data-path="audit">Want the proof</button>
+        <button class="btn primary" id="cta-play">Start pushing</button>
+        <button class="btn" id="cta-tour">60-second tour</button>
+        <span class="hint">Drag on the table, or use the arrow keys.</span>
       </div>
     </div>
-    <div class="hero-card" aria-hidden="true">
-      <div class="mini-score">
-        <div class="mini-head">Live scoreboard <span>onset F1</span></div>
-        <div class="mini-row wins"><span>nearest_to_pusher</span><span>0 params</span><span>0.961</span></div>
-        <div class="mini-row model"><span>the AI gate</span><span>~80k params</span><span>0.694</span></div>
-        <div class="mini-row"><span>already_moving</span><span>0 params</span><span>0.927</span></div>
-        <p>Zero dials. Zero training. Still winning. Try to flip it below.</p>
-      </div>
-      <div class="hero-illus">
-        <span class="blob box"></span><span class="blob pusher"></span><span class="blob arrow">-></span>
-      </div>
-    </div>
+
+    <aside class="hero-card">
+      <div class="card-head"><span>From the paper</span><span>onset F1</span></div>
+      <ul class="mini-score">
+        <li class="wins"><span class="rule">nearest_to_pusher</span><span class="pill">0 params</span><b>0.961</b></li>
+        <li class="model"><span class="rule">the trained gate</span><span class="pill">5,636 params</span><b>0.694</b></li>
+        <li><span class="rule">already_moving</span><span class="pill">0 params</span><b>0.927</b></li>
+      </ul>
+      <p class="card-foot">No dials, no training, still ahead. The scoreboard below recomputes this live on whatever you do.</p>
+    </aside>
   </div>
 
-  <p class="loading" id="status" role="status" aria-live="polite">Loading model… <span class="skeleton-text" aria-hidden="true"></span></p>
-  <div class="progress" id="progress" hidden><div class="bar" id="progress-bar"></div></div>
+  <div class="status-line">
+    <p class="loading" id="status" role="status" aria-live="polite">Loading model… <span class="skeleton-text" aria-hidden="true"></span></p>
+    <div class="progress" id="progress" hidden><div class="bar" id="progress-bar"></div></div>
+  </div>
 </header>
 
-<section class="explain-strip" id="explain-strip">
-  <div class="strip-head">
-    <h2>How it works — in 20 seconds</h2>
-    <button class="small" id="toggle-strip">Hide</button>
-  </div>
-  <div class="comic">
-    <article><span class="num">1</span><h3>You push</h3><p>One finger-like pusher. Boxes slide, bump, chain-react.</p></article>
-    <article><span class="num">2</span><h3>AI guesses</h3><p>"Gate ON" means <em>I think this box will move next frame.</em> Dashed box is where it thinks it will be.</p></article>
-    <article><span class="num">3</span><h3>Simple ruler wins</h3><p><code>nearest_to_pusher</code>: <em>"whichever box is closest to finger moves."</em> That is it. No learning.</p></article>
-    <article><span class="num">4</span><h3>Scoreboard</h3><p><strong>Onset F1</strong> counts only boxes at rest. No free points for "still rolling, still rolling".</p></article>
-  </div>
-  <p class="strip-foot">Filter: only frames where <em>something moved more than 2 cm</em> count — otherwise 95 percent is finger wandering and nothing happens.</p>
-</section>
-
-<nav class="tasks" id="tasks" aria-label="Choose a playground">
-  <button data-task="sandbox" class="active">Sandbox <small>you drive</small></button>
-  <button data-task="replay">4 Engines <small>watch replays</small></button>
-  <button data-task="transfer">More Boxes <small>up to 12</small></button>
-  <button data-task="planning">Make It Plan <small>CEM</small></button>
-  <button data-task="paper">Paper <small>authors and abstract</small></button>
+<nav class="tasks" id="tasks" aria-label="Choose a view" role="tablist">
+  <button data-task="sandbox" role="tab" aria-selected="true" class="active"><b>Sandbox</b><small>you drive</small></button>
+  <button data-task="replay" role="tab" aria-selected="false"><b>Four engines</b><small>recorded replays</small></button>
+  <button data-task="transfer" role="tab" aria-selected="false"><b>More boxes</b><small>2 → 12 objects</small></button>
+  <button data-task="planning" role="tab" aria-selected="false"><b>Planning</b><small>CEM through the model</small></button>
+  <button data-task="paper" role="tab" aria-selected="false" class="tab-paper"><b>Paper</b><small>abstract &amp; authors</small></button>
 </nav>
 
 <main>
@@ -93,41 +81,41 @@
         <div class="toolbar-actions">
           <button id="btn-step" title="Step one frame (.)">Step</button>
           <button id="btn-trails" title="Toggle trails (T)" aria-pressed="false">Trails</button>
-          <button id="btn-probs" title="Toggle probs (P)" aria-pressed="true">Probs</button>
-          <button id="btn-screenshot" title="Save PNG">PNG</button>
+          <button id="btn-probs" title="Toggle gate probabilities (P)" aria-pressed="true">Probs</button>
+          <button id="btn-screenshot" title="Save this frame as PNG">PNG</button>
         </div>
       </div>
       <canvas id="scene" width="720" height="720" aria-label="Simulation view"></canvas>
       <div class="inspector" id="inspector" hidden></div>
-      <div class="canvas-legend">
-        <span><i class="swatch pusher"></i> finger</span>
-        <span><i class="swatch gate-on"></i> AI says "will move"</span>
-        <span><i class="swatch truth"></i> actually moved</span>
-        <span><i class="swatch ghost"></i> AI ghost prediction</span>
-        <span><i class="swatch goal"></i> goal</span>
-        <span class="legend-hint">Hover a box — drag or arrows to push</span>
-      </div>
       <div class="overlay" id="paused-overlay" hidden>Paused — press Space or Play</div>
 
+      <ul class="canvas-legend">
+        <li><i class="swatch pusher"></i> the finger</li>
+        <li><i class="swatch gate-on"></i> model says “will move”</li>
+        <li><i class="swatch truth"></i> actually moved</li>
+        <li><i class="swatch ghost"></i> predicted position</li>
+        <li><i class="swatch goal"></i> goal</li>
+        <li class="legend-hint">Hover a box to inspect it</li>
+      </ul>
+
       <div class="challenges" id="challenges">
-        <h4>Try to break the rules <span id="ch-progress">0/3</span></h4>
-        <label><input type="checkbox" disabled data-ch="push"> Push any box</label>
-        <label><input type="checkbox" disabled data-ch="chain"> Make a chain reaction (box hits box)</label>
-        <label><input type="checkbox" disabled data-ch="trick"> Trick the AI: rule right, AI wrong</label>
+        <h4>Try to break it <span class="counter" id="ch-progress">0/3</span></h4>
+        <label><input type="checkbox" disabled data-ch="push"> <span>Push any box</span></label>
+        <label><input type="checkbox" disabled data-ch="chain"> <span>Cause a chain reaction</span></label>
+        <label><input type="checkbox" disabled data-ch="trick"> <span>Rule right, model wrong</span></label>
       </div>
     </div>
 
     <aside class="panel">
       <div class="task-copy" id="task-copy"></div>
 
-      <div class="controls">
+      <section class="controls" aria-label="Controls">
         <div class="control-group">
-          <h3>Playback</h3>
-          <div class="row">
+          <div class="row buttons">
             <button id="play" class="primary">Pause</button>
             <button id="reset">New scene</button>
             <button id="step" title="Single frame">Step</button>
-            <button id="share" title="Copy link">Share</button>
+            <button id="share" title="Copy a link to this exact setup">Share</button>
           </div>
           <div class="row">
             <label for="speed">Speed</label>
@@ -136,66 +124,63 @@
           </div>
         </div>
 
-        <div class="control-group">
-          <h3>Drive</h3>
-          <div class="row" id="drive-row">
-            <label><input type="radio" name="drive" value="auto" checked> Auto</label>
-            <label><input type="radio" name="drive" value="mouse"> Mouse</label>
-            <label><input type="radio" name="drive" value="keys"> Keys</label>
+        <div class="control-group" id="drive-group">
+          <h3>Who moves the finger</h3>
+          <div class="row segmented" id="drive-row">
+            <label><input type="radio" name="drive" value="auto" checked> <span>Auto</span></label>
+            <label><input type="radio" name="drive" value="mouse"> <span>Mouse</span></label>
+            <label><input type="radio" name="drive" value="keys"> <span>Keys</span></label>
           </div>
-          <p class="hint" id="keys-hint" hidden>Arrows or WASD to push, hold Shift for fine control</p>
+          <p class="hint" id="keys-hint" hidden>Arrows or WASD to push. Hold Shift for fine control.</p>
         </div>
 
         <div class="control-group">
-          <h3>Tweak the test</h3>
           <div class="row" id="count-row" hidden>
             <label for="count">Boxes</label>
             <input type="range" id="count" min="2" max="12" step="1" value="3">
             <output id="count-out">3</output>
-          </div>
-          <div class="row">
-            <label for="radius">Rule radius</label>
-            <input type="range" id="radius" min="0.02" max="0.22" step="0.005" value="0.07">
-            <output id="radius-out">0.070 m</output>
-          </div>
-          <p class="hint tiny">Increase the radius and the rule says "nearer counts". See if any setting saves the AI. (It does not.)</p>
-          <div class="row checks">
-            <label><input type="checkbox" id="check-trails"> Trails</label>
-            <label><input type="checkbox" id="check-vel"> Arrows</label>
-            <label><input type="checkbox" id="check-grid" checked> Grid</label>
           </div>
           <div class="row" id="episode-row" hidden>
             <label for="episode">Engine</label>
             <select id="episode"></select>
           </div>
           <p class="hint" id="hint"></p>
-          <p class="hint">Checkpoint: <code id="model-label">…</code> <a id="hf-link" href="https://huggingface.co/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">HF</a></p>
           <p class="warn" id="domain-notice" hidden></p>
         </div>
 
-        <details class="shortcuts">
-          <summary>Shortcuts — press ? for help</summary>
-          <ul>
-            <li><code>Space</code> play or pause, <code>R</code> new scene, <code>.</code> step one frame</li>
-            <li><code>T</code> trails, <code>P</code> probs, <code>G</code> grid, <code>1-4</code> switch task, <code>?</code> help</li>
-          </ul>
+        <details class="advanced">
+          <summary>Tune the test</summary>
+          <div class="row">
+            <label for="radius">Rule radius</label>
+            <input type="range" id="radius" min="0.02" max="0.22" step="0.005" value="0.07">
+            <output id="radius-out">0.070 m</output>
+          </div>
+          <p class="hint tiny">The thresholded rules call anything inside this radius “about to move”. Try to find a setting that rescues the model. There isn’t one.</p>
+          <div class="row checks">
+            <label><input type="checkbox" id="check-trails"> <span>Trails</span></label>
+            <label><input type="checkbox" id="check-vel"> <span>Velocity arrows</span></label>
+            <label><input type="checkbox" id="check-grid" checked> <span>Grid</span></label>
+          </div>
+          <p class="hint tiny">Checkpoint <code id="model-label">…</code> · <a id="hf-link" href="https://huggingface.co/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">weights on Hugging Face</a></p>
+          <div class="row buttons">
+            <button class="small ghost" id="help-btn" type="button" aria-haspopup="dialog">Keyboard shortcuts</button>
+          </div>
         </details>
-        <button class="small" id="help-btn" type="button" aria-haspopup="dialog">Keyboard help</button>
-      </div>
+      </section>
 
-      <div class="scoreboard">
+      <section class="scoreboard" aria-label="Live scoreboard">
         <div class="scoreboard-head">
-          <h2>Live scoreboard <span class="badge">onset F1 is hard mode</span></h2>
+          <h2>Live scoreboard</h2>
           <span class="frames" id="frames">0 frames</span>
         </div>
         <p class="scorenote">
-          Scored like the paper — only frames where something moved more than 2 cm, same code as <code>onset_shortcut_audit.py</code>.
-          <strong>Onset F1</strong> is resting boxes only. That is the "did you predict the hit?" score. Hover a row for what the rule does.
+          Scored exactly like the paper: only frames where something moved more than 2&nbsp;cm.
+          <strong>Onset F1</strong> counts objects that were at rest — the “did you see the hit coming?” column, and the one that carries the argument.
         </p>
-        <div class="score-actions">
-          <button id="sort-f1" class="small">Sort by F1</button>
-          <button id="sort-onset" class="small active">Sort by onset</button>
-          <button id="copy-scores" class="small">Copy CSV</button>
+        <div class="score-actions" role="group" aria-label="Sort scoreboard">
+          <button id="sort-onset" class="small active">Onset F1</button>
+          <button id="sort-f1" class="small">Overall F1</button>
+          <button id="copy-scores" class="small ghost">Copy CSV</button>
         </div>
         <table id="scores">
           <thead>
@@ -203,108 +188,183 @@
           </thead>
           <tbody></tbody>
         </table>
-        <p class="scorenote" id="insight" style="margin-top:.6rem;font-weight:600"></p>
-      </div>
+        <p class="insight" id="insight"></p>
+      </section>
     </aside>
   </section>
 
   <section class="paper-view" id="paper-view" hidden>
-    <div class="paper-head">
-      <p class="eyebrow">Paper — WORLDS at IROS 2026</p>
+    <header class="paper-head">
+      <p class="eyebrow"><span class="accepted">Accepted</span> WORLDS Workshop · IEEE/RSJ IROS 2026</p>
       <h2>Modeling What Changes: Sparse, Residual World Models for Object-Centric Manipulation</h2>
-      <div class="authors">
-        <div class="author"><strong>Param Thakkar</strong><span>Veermata Jijabai Technological Institute</span><a href="mailto:puthakkar_b22@ce.vjti.ac.in">puthakkar_b22@ce.vjti.ac.in</a></div>
-        <div class="author"><strong>Parsika Paresh Shah</strong><span>Arizona State University</span><a href="mailto:pshah144@asu.edu">pshah144@asu.edu</a></div>
-        <div class="author"><strong>Manisha Sushant Gote</strong><span>Zuigo Private Limited</span><a href="mailto:manisha@zuigo.ai">manisha@zuigo.ai</a></div>
-      </div>
+      <ol class="authors">
+        <li class="author">
+          <strong>Param Thakkar</strong>
+          <span>Veermata Jijabai Technological Institute</span>
+          <a href="mailto:puthakkar_b22@ce.vjti.ac.in">puthakkar_b22@ce.vjti.ac.in</a>
+        </li>
+        <li class="author">
+          <strong>Parsika Paresh Shah</strong>
+          <span>Arizona State University</span>
+          <a href="mailto:pshah144@asu.edu">pshah144@asu.edu</a>
+        </li>
+        <li class="author">
+          <strong>Manisha Sushant Gote</strong>
+          <span>ZuiGO Private Limited</span>
+          <a href="mailto:manisha@zuigo.ai">manisha@zuigo.ai</a>
+        </li>
+      </ol>
       <div class="paper-actions">
-        <a class="chip" href="https://github.com/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">Code</a>
-        <a class="chip ghost" href="https://huggingface.co/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">Checkpoints</a>
-        <a class="chip" href="IEEE_Conference_Template/conference_101719.pdf" target="_blank" rel="noopener">PDF</a>
+        <a class="chip" href="https://github.com/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">Code &amp; data generators</a>
+        <a class="chip" href="https://huggingface.co/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">Checkpoints</a>
+        <a class="chip ghost" href="https://github.com/ParamThakkar123/sparse_world_models/blob/main/experiments/RESULTS.md" target="_blank" rel="noopener">Result tables</a>
+        <button class="chip ghost" id="copy-bibtex" type="button">Copy BibTeX</button>
       </div>
-    </div>
+    </header>
+
     <div class="paper-grid">
-      <article class="paper-card">
+      <article class="paper-card wide">
         <h3>Abstract</h3>
-        <p>Monolithic world models predict the entire next state at every step, spending capacity re-predicting the static majority and injecting error into it. We ask whether explicitly modeling what changes — a per-object change gate plus a residual delta head that perturbs only gated objects, copying the rest verbatim — is a more effective and interpretable bias.</p>
-        <p>On a MuJoCo tabletop pushing benchmark (3 to 8 objects), the sparse residual model is 2.5 to 4.6 times more accurate than a dense MLP at 8.6 to 11.1 times fewer parameters overall, but the durable win is error suppression on the static majority (F1 0.80 to 0.87, precision 0.92 to 0.97) with delta regression at roughly no-op quality, not accurate dynamics on movers. The gate transfers across counts (99.4 percent F1 retention), is more sample efficient, and when featurized for planner-visited states, sparse reaches 0.23 plus minus 0.06 success versus random 0.15 and dense 0.00 at every seed.</p>
+        <p>Monolithic world models predict the entire next state at every step, spending capacity re-predicting the static majority of a scene and injecting error into it. We ask whether explicitly modeling <em>what changes</em> — a per-object change gate plus a residual delta head that perturbs only gated objects, copying the rest verbatim — is a more effective and interpretable bias.</p>
+        <p>On a MuJoCo tabletop pushing benchmark (3–8 objects), the sparse/residual model is 2.5–4.6× more accurate than a dense MLP at 8.6–11.1× fewer parameters overall, but this headline is driven entirely by error suppression on the static majority: at N=5, overall L2 is 0.104 (sparse) versus 0.107 (no-op), and changed-object L2 is 0.426 versus 0.446 — at or barely above the floor of predicting no motion. The durable win is therefore <strong>change detection that avoids error injection</strong> (F1 0.80–0.87, precision 0.92–0.97) with delta regression at roughly no-op quality, not accurate dynamics on movers. The gate transfers across object counts (99.4% F1 retention) and is more sample-efficient. For planning, once featurized for planner-visited states, sparse reaches 0.23 ± 0.06 success versus random 0.15 and dense 0.00 at every seed.</p>
       </article>
+
+      <article class="paper-card">
+        <h3>Method in one line</h3>
+        <p>For each object the shared gate emits a binary decision <code>g</code> and the delta head a residual <code>Δ</code>. The prediction is</p>
+        <p class="formula"><code>p<sub>next</sub> = p + g · Δ</code></p>
+        <p>Objects the gate leaves off are copied verbatim, so they cannot drift. Weights are shared across objects, which is why one checkpoint trained on three boxes runs on twelve. Training is class-balanced BCE on the gate, L2 on deltas for changed objects only, plus a sparsity penalty.</p>
+      </article>
+
+      <article class="paper-card">
+        <h3>What holds up, and what doesn’t</h3>
+        <table class="claims">
+          <tbody>
+            <tr class="good"><td>Change-detection F1 (3–8 objects)</td><td>0.80–0.87</td></tr>
+            <tr class="good"><td>Precision on unchanged objects</td><td>0.92–0.97</td></tr>
+            <tr class="good"><td>Parameters versus a dense MLP</td><td>8.6–11.1× fewer</td></tr>
+            <tr class="good"><td>Gate F1 retained at unseen object counts</td><td>99.4%</td></tr>
+            <tr class="bad"><td>Overall L2 at N=5 vs predicting no motion</td><td>0.104 vs 0.107</td></tr>
+            <tr class="bad"><td>Changed-object L2 at N=5 vs no motion</td><td>0.426 vs 0.446</td></tr>
+            <tr class="mixed"><td>CEM planning success (random 0.15, dense 0.00)</td><td>0.23 ± 0.06</td></tr>
+          </tbody>
+        </table>
+        <p class="hint tiny">The bottom rows are in the paper, not buried in it: open-loop rollout stays worse than the no-op floor overall. The durable win is error suppression, not dynamics.</p>
+      </article>
+
       <article class="paper-card">
         <h3>Why this page exists</h3>
-        <p>The gate looks strong on overall L2, but most frames are trivially static. This demo scores only frames where something moved more than 2 cm and focuses on <strong>onset F1</strong> — did you predict the hit on a box at rest? That is where <code>nearest_to_pusher</code> and <code>already_moving</code> expose the shortcut.</p>
-        <ul>
-          <li><strong>Sandbox</strong> — live physics, live scoring against 11 rules</li>
-          <li><strong>4 Engines</strong> — same shortcut on MuJoCo, Box2D, Chipmunk</li>
-          <li><strong>More Boxes</strong> — same weights on 2 to 12 objects</li>
-          <li><strong>Make It Plan</strong> — model as forward simulator for CEM</li>
+        <p>A gate at F1 0.87 sounds strong until you ask what a rule with no parameters scores on the same frames. So this demo runs the eleven-rule audit battery live, motion-filtered, and reports <strong>onset F1</strong> — resting objects only, where a prediction is actually required.</p>
+        <ul class="tab-guide">
+          <li><button class="linkish" data-jump="sandbox" type="button">Sandbox</button> live planar physics, live scoring</li>
+          <li><button class="linkish" data-jump="replay" type="button">Four engines</button> the same shortcut on MuJoCo, Box2D and Chipmunk</li>
+          <li><button class="linkish" data-jump="transfer" type="button">More boxes</button> one checkpoint, 2 to 12 objects</li>
+          <li><button class="linkish" data-jump="planning" type="button">Planning</button> the model as a forward simulator for CEM</li>
         </ul>
       </article>
+
       <article class="paper-card">
-        <h3>Method at a glance</h3>
-        <p>Per object: shared gate network outputs a binary decision g, delta head outputs residual delta. Prediction is <code>p_next = p + g * delta</code>. Objects the gate leaves off are copied verbatim, so no injection. Train with class-balanced BCE on the gate, L2 on deltas only for changed objects, plus sparsity penalty.</p>
-        <p class="hint">Fig 1 in the paper shows the per-object head with weights shared across objects, independent of object count.</p>
+        <h3>Reproduce it</h3>
+        <p>Prediction and rollout tables:</p>
+        <pre><code>bash experiments/run_count_seeds.sh 3</code></pre>
+        <p>Audit a benchmark of your own with the same battery:</p>
+        <pre><code>python -m experiments.audit_battery \
+  --test yours_test.npz --val yours_val.npz</code></pre>
+        <p class="hint tiny">Thresholded rules fit their radius on validation and apply it unchanged to test. The verdict is <code>DEGENERATE</code>, <code>MARGINAL</code> or <code>SURVIVES</code>.</p>
       </article>
-      <article class="paper-card">
-        <h3>Cite and reproduce</h3>
-        <p><code>bash experiments/run_count_seeds.sh 3</code> reproduces prediction and rollout tables. Audit any npz with <code>python -m experiments.audit_battery --test yours.npz --val yours.npz</code>. Weights match PyTorch to 1e-4 in <code>tests/test_web_export.py</code>.</p>
-        <p class="hint">Code, data generators, checkpoints and result tables at the GitHub and Hugging Face links above.</p>
+
+      <article class="paper-card wide cite">
+        <h3>Cite</h3>
+        <pre id="bibtex"><code>@inproceedings{thakkar2026modeling,
+  title  = {Modeling What Changes: Sparse, Residual
+            World Models for Object-Centric
+            Manipulation},
+  author = {Thakkar, Param and Shah, Parsika Paresh
+            and Gote, Manisha Sushant},
+  booktitle = {WORLDS Workshop, IEEE/RSJ International
+               Conference on Intelligent Robots and
+               Systems (IROS)},
+  year   = {2026}
+}</code></pre>
       </article>
     </div>
   </section>
 
+  <section class="explain-strip" id="explain-strip">
+    <div class="strip-head">
+      <h2>How to read the canvas</h2>
+      <button class="small ghost" id="toggle-strip">Hide</button>
+    </div>
+    <ol class="comic">
+      <li><span class="num">1</span><h3>You push</h3><p>One finger-like pusher. Boxes slide, bump and chain-react under real quasi-static physics.</p></li>
+      <li><span class="num">2</span><h3>The model guesses</h3><p>A filled box means the gate said <em>this one will move next frame</em>. The dashed outline is where it thinks the box will land.</p></li>
+      <li><span class="num">3</span><h3>A rule competes</h3><p><code>nearest_to_pusher</code>: whichever box is closest to the finger moves. That is the whole rule — no parameters, no training.</p></li>
+      <li><span class="num">4</span><h3>The scoreboard judges</h3><p><strong>Onset F1</strong> only counts boxes that were at rest, so nobody gets free points for “still rolling, still rolling”.</p></li>
+    </ol>
+    <p class="strip-foot">Only frames where something moved more than 2&nbsp;cm are scored. Without that filter about 95% of steps are the finger wandering with nothing happening, every rule scores near zero, and no number here would be comparable to the paper.</p>
+  </section>
+
   <section class="explainer">
-    <h2>Want the full story? Pick your depth</h2>
+    <h2>Go deeper</h2>
     <div class="cards">
-      <article class="card fun">
-        <h3>The playground idea</h3>
-        <p>One finger, a few boxes kept apart. The closest box to the finger is almost always the one that moves. One number — distance — tells you the answer. Filters just pick <em>which</em> number.</p>
-        <a class="chip" href="#tasks" onclick="document.querySelector('[data-task=sandbox]').click()">Try it</a>
+      <article class="card">
+        <h3>The idea, in plain terms</h3>
+        <p>One finger, a few well-separated boxes. The box closest to the finger is almost always the one that moves, so a single scalar — distance — recovers the label. Filters only choose <em>which</em> scalar.</p>
+        <button class="chip" data-jump="sandbox" type="button">Try it</button>
       </article>
       <article class="card">
-        <h3>What the AI is actually good at</h3>
-        <p>Not detection — <strong>copying still boxes perfectly</strong>. Boxes the gate leaves OFF stay exactly put, so zero drift. Gap versus dense model grows with more boxes. Set boxes to 12 and watch.</p>
-        <a class="chip" href="#tasks" onclick="document.querySelector('[data-task=transfer]').click()">See transfer</a>
+        <h3>What the model is genuinely good at</h3>
+        <p>Not detection — <strong>copying still objects exactly</strong>. Objects the gate leaves off are untouched, so they cannot drift, and the gap over a dense model grows with object count. Set boxes to 12 and watch.</p>
+        <button class="chip" data-jump="transfer" type="button">See transfer</button>
       </article>
       <article class="card">
-        <h3>Audit any benchmark in 1 command</h3>
-        <p><code>python -m experiments.audit_battery --test yours.npz --val yours.npz</code><br>11 rules, fitted on val, applied to test. Verdict: <code>DEGENERATE / MARGINAL / SURVIVES</code>.</p>
-        <a class="chip" href="https://github.com/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">Get code</a>
+        <h3>Audit your own benchmark</h3>
+        <p><code>python -m experiments.audit_battery --test yours.npz --val yours.npz</code> — eleven rules, fitted on validation, applied to test. Verdict: <code>DEGENERATE</code>, <code>MARGINAL</code> or <code>SURVIVES</code>.</p>
+        <a class="chip" href="https://github.com/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">Get the code</a>
       </article>
       <article class="card">
-        <h3>Paper gotchas (we document failures)</h3>
-        <p>Three claims refuted by proper baselines. Leaky splits (25 percent episode overlap) fixed via <code>build_clean_splits.py</code>. <code>experiments/RESULTS.md</code> is the source of truth.</p>
+        <h3>We document the failures too</h3>
+        <p>Claims of ours that proper baselines refuted are kept in the record, as is the leaky split (25% episode overlap) fixed by <code>build_clean_splits.py</code>. <code>experiments/RESULTS.md</code> is the source of truth.</p>
         <a class="chip" href="https://github.com/ParamThakkar123/sparse_world_models/blob/main/experiments/RESULTS.md" target="_blank" rel="noopener">Read RESULTS</a>
       </article>
     </div>
-    <p class="footer-note">
-      Built for skeptics. Everything verifiable: weights in <code>docs/assets/model.json</code> — JS matches PyTorch to 1e-4 (<code>tests/test_web_export.py</code>) — Repro: <code>bash experiments/run_count_seeds.sh 3</code>.
-      Anonymous PDF links omitted per <code>SUBMISSION_RUNBOOK.md</code>.
-    </p>
   </section>
+
+  <footer class="site-foot">
+    <p>
+      Built for skeptics. The weights on this page are the paper's weights (<code>docs/assets/model.json</code>); the JavaScript forward pass is checked against PyTorch to 1e-4 by <code>tests/test_web_export.py</code>; the scoring is the same code path as <code>onset_shortcut_audit.py</code>.
+    </p>
+    <p class="foot-links">
+      <a href="https://github.com/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://huggingface.co/ParamThakkar123/sparse_world_models" target="_blank" rel="noopener">Hugging Face</a>
+      <button class="linkish" data-goto-paper type="button">Paper &amp; authors</button>
+    </p>
+  </footer>
 </main>
 
 <div class="help" id="help" hidden role="dialog" aria-modal="true" aria-labelledby="help-title">
   <div class="help-card">
-    <button class="x" id="help-close" type="button" aria-label="Close">x</button>
+    <button class="x" id="help-close" type="button" aria-label="Close">×</button>
     <h3 id="help-title">Keyboard and touch</h3>
     <ul>
-      <li><code>Space</code> play or pause — <code>R</code> new scene — <code>.</code> step</li>
+      <li><code>Space</code> play or pause · <code>R</code> new scene · <code>.</code> step one frame</li>
       <li><code>Arrows</code> or <code>WASD</code> push (hold <code>Shift</code> for fine control)</li>
-      <li>Drag on canvas, pinch is not needed — finger follows pointer</li>
-      <li><code>T</code> trails, <code>P</code> probabilities, <code>G</code> grid, <code>1-4</code> tasks</li>
+      <li>Drag anywhere on the table — the finger follows your pointer</li>
+      <li><code>T</code> trails · <code>P</code> probabilities · <code>G</code> grid · <code>1</code>–<code>5</code> switch view · <code>?</code> this dialog</li>
     </ul>
-    <p class="hint">Tip: set Drive to Keys, then hold an arrow to nudge a box into another for a chain reaction.</p>
+    <p class="hint">Tip: set the finger to <strong>Keys</strong>, then hold one arrow to nudge a box into another for a chain reaction.</p>
   </div>
 </div>
+
 <div class="tour" id="tour" hidden>
   <div class="tour-card">
-    <button class="x" id="tour-close" type="button" aria-label="Close">x</button>
-    <p class="eyebrow">60 second tour</p>
+    <button class="x" id="tour-close" type="button" aria-label="Close">×</button>
+    <p class="eyebrow">60-second tour</p>
     <h3 id="tour-title">Push a box</h3>
-    <p id="tour-text">Drag on the table or use Auto. Watch the dashed ghost versus the solid box.</p>
+    <p id="tour-text">Drag on the table or leave it on Auto. Watch the dashed ghost against the solid box.</p>
     <div class="tour-dots" id="tour-dots"></div>
-    <div class="row" style="justify-content:space-between">
-      <button class="small" id="tour-skip" type="button">Skip</button>
+    <div class="row tour-nav">
+      <button class="small ghost" id="tour-skip" type="button">Skip</button>
       <button class="primary" id="tour-next" type="button">Next</button>
     </div>
   </div>

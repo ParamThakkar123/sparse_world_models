@@ -43,7 +43,7 @@ on screen with nothing on the page to label it.
 
 | file | what it is |
 |---|---|
-| `index.html` | the page: four tasks, one canvas, one scoreboard |
+| `index.html` | the page: four interactive tabs plus a Paper tab (title, authors, abstract, what holds up), one canvas, one scoreboard |
 | `assets/model.js` | port of the gate + delta head and the contact featurisation. Checked against PyTorch by `tests/test_web_export.py` |
 | `assets/battery.js` | port of the eleven trivial rules and the F1 bookkeeping from `onset_shortcut_audit.py` |
 | `assets/planar.js` | port of `models/envs/planar_push.py`, so the sandbox is live physics rather than a recording |
