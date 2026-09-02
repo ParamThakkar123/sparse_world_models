@@ -709,7 +709,7 @@ async function main() {
   function openTour(){tourIdx=0;renderTour();tourEl.hidden=false}function closeTour(){tourEl.hidden=true;localStorage.setItem('tourDone','1')}
   const ctaPlay=document.getElementById('cta-play');if(ctaPlay)ctaPlay.addEventListener('click',()=>{document.getElementById('scene').scrollIntoView({behavior:'smooth',block:'center'});state.running=true;syncPlayButton();toast('Go! Drag a box');});
   const ctaTour=document.getElementById('cta-tour');if(ctaTour)ctaTour.addEventListener('click',openTour);
-  const tNext=document.getElementById('tour-next');if(tNext)tNext.addEventListener('click',()=>{if(tourIdx<tourSteps.length-1){tourIdx++;renderTour()}else{closeTour();toast('Have fun!')}});
+  const tNext=document.getElementById('tour-next');if(tNext)tNext.addEventListener('click',()=>{if(tourIdx<tourSteps.length-1){tourIdx++;renderTour()}else{closeTour();toast('Have fun!');document.getElementById('scene').scrollIntoView({behavior:'smooth',block:'center'});state.running=true;syncPlayButton();}});
   const tClose=document.getElementById('tour-close');if(tClose)tClose.addEventListener('click',closeTour);
   const tSkip=document.getElementById('tour-skip');if(tSkip)tSkip.addEventListener('click',closeTour);
   if(tourEl)tourEl.addEventListener('click',(e)=>{if(e.target===tourEl)closeTour()});

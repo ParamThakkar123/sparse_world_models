@@ -134,6 +134,7 @@ td .rule-name{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;f
 .confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:40}
 .confetti i{position:absolute;width:8px;height:8px;background:var(--accent);animation:fall 1.2s ease-in forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+.tour[hidden]{display:none !important}
 .tour{position:fixed;inset:0;background:color-mix(in srgb,var(--ink) 38%,transparent);backdrop-filter:blur(4px);display:grid;place-items:center;z-index:60;padding:1rem}
 .tour-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:1rem 1.1rem;max-width:28rem;width:100%;box-shadow:0 16px 40px rgba(0,0,0,.18);position:relative}
 .tour-card .x{position:absolute;top:.4rem;right:.5rem;border:none;background:transparent;font-size:1.3rem;cursor:pointer;color:var(--ink-soft)}
