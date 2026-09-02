@@ -98,6 +98,16 @@ function closeTour(){if(!tourEl) return; tourEl.hidden=true; tourEl.style.displa
   });
   document.querySelectorAll('.path').forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll('.path').forEach(x=>x.classList.remove('active'));b.classList.add('active');const p=b.dataset.path;if(p==='play'){const s=document.getElementById('scene'); if(s) s.scrollIntoView({behavior:'smooth'});}else if(p==='learn'){const s=document.getElementById('explain-strip'); if(s) s.scrollIntoView({behavior:'smooth'}); openTour();}else{const s=document.querySelector('.explainer'); if(s) s.scrollIntoView({behavior:'smooth'});}})});
   const toggleStrip=document.getElementById('toggle-strip');if(toggleStrip) toggleStrip.addEventListener('click',()=>{const s=document.querySelector('.comic');const f=document.querySelector('.strip-foot');if(!s) return; const hid=s.hidden; s.hidden=!hid; if(f) f.hidden=!hid; toggleStrip.textContent=hid?'Hide':'Show';});
+  const help=document.getElementById('help'); const helpBtn=document.getElementById('help-btn'); const helpClose=document.getElementById('help-close');
+  function openHelp(){ if(help){help.hidden=false; help.style.display='grid';} } function closeHelp(){ if(help){help.hidden=true; help.style.display='none'; } }
+  if(helpBtn) helpBtn.addEventListener('click', openHelp); if(helpClose) helpClose.addEventListener('click', closeHelp); if(help) help.addEventListener('click', (e)=>{ if(e.target===help) closeHelp(); });
+  const tooltip=document.getElementById('tooltip');
+  function showTip(text, x, y){ if(!tooltip) return; tooltip.textContent=text; tooltip.hidden=false; tooltip.style.left=(x+12)+'px'; tooltip.style.top=(y+12)+'px'; }
+  function hideTip(){ if(tooltip) tooltip.hidden=true; }
+  document.addEventListener('mouseover', (e)=>{ const tr=e.target.closest && e.target.closest('tr[title]'); if(tr){ const r=tr.getBoundingClientRect(); showTip(tr.title, r.left, r.top); tr.dataset.hasTip='1'; } });
+  document.addEventListener('mouseout', (e)=>{ const tr=e.target.closest && e.target.closest('tr[title]'); if(tr) hideTip(); });
+  document.addEventListener('mousemove', (e)=>{ if(tooltip && !tooltip.hidden){ tooltip.style.left=(e.clientX+12)+'px'; tooltip.style.top=(e.clientY+12)+'px'; } });
+  document.addEventListener('keydown', (e)=>{ if(e.key==='?' || (e.key==='/' && e.shiftKey)){ openHelp(); } if(e.key==='Escape'){ closeHelp(); closeTour(); } });
 })();
 
 function toCanvas(x, y) {
@@ -557,9 +567,13 @@ function applyUrlState() {
   if (p.get('drive') && ['auto', 'mouse', 'keys'].includes(p.get('drive'))) state.drive = p.get('drive');
 }
 async function fetchWithProgress(url, label) {
-  const res = await fetch(url);
+  const cached = sessionStorage.getItem(`cache:${url}`);
+  if (cached) try { return JSON.parse(cached); } catch {}
+  const res = await fetch(url, {cache:'force-cache'});
   if (!res.ok) throw new Error(`${label} not found at ${url}`);
-  return res.json();
+  const json = await res.json();
+  try { sessionStorage.setItem(`cache:${url}`, JSON.stringify(json)); } catch {}
+  return json;
 }
 async function loadBundleWithFallback() {
   const params = new URLSearchParams(window.location.search);
@@ -571,6 +585,8 @@ async function loadBundleWithFallback() {
   let lastError = null;
   for (const url of candidates) {
     try {
+      const cached = sessionStorage.getItem(`bundle:${url}`);
+      if (cached) try { const j=JSON.parse(cached); const b=await SparseResidualModel.loadBundle(url); sessionStorage.setItem(`bundle:${url}`, JSON.stringify(j)); return b; } catch {}
       const bundle = await SparseResidualModel.loadBundle(url);
       return bundle;
     } catch (e) { lastError = e; }
@@ -607,6 +623,7 @@ async function main() {
     state.episodes = episodes;
     if (progressBar) progressBar.style.width = '100%';
     setTimeout(() => { if (progress) progress.hidden = true; }, 400);
+    const cw=document.getElementById('canvas-wrap'); if(cw) cw.classList.remove('is-loading');
   } catch (error) {
     statusEl.textContent = 'Could not load the model. This page uses ES modules and fetch, so it needs to be served over http. Open it from GitHub Pages, or run `python -m http.server` in docs/.';
     if (progress) progress.hidden = true;
