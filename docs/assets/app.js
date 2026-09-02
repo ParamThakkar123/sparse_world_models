@@ -90,6 +90,12 @@ function closeTour(){if(!tourEl) return; tourEl.hidden=true; tourEl.style.displa
   const tClose=document.getElementById('tour-close');if(tClose) tClose.addEventListener('click', closeTour);
   const tSkip=document.getElementById('tour-skip');if(tSkip) tSkip.addEventListener('click', closeTour);
   if(tourEl) tourEl.addEventListener('click',(e)=>{if(e.target===tourEl) closeTour()});
+  document.addEventListener('click', (e)=>{
+    const s=e.target.closest && e.target.closest('#tour-skip, #tour-close');
+    if(s){ e.preventDefault(); closeTour(); return; }
+    const n=e.target.closest && e.target.closest('#tour-next');
+    if(n && n.closest('#tour')){ e.preventDefault(); if(tourIdx<tourSteps.length-1){tourIdx++;renderTour()}else{closeTour();toast('Have fun!');const sc=document.getElementById('scene'); if(sc) sc.scrollIntoView({behavior:'smooth',block:'center'}); state.running=true; try{syncPlayButton()}catch{}} }
+  });
   document.querySelectorAll('.path').forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll('.path').forEach(x=>x.classList.remove('active'));b.classList.add('active');const p=b.dataset.path;if(p==='play'){const s=document.getElementById('scene'); if(s) s.scrollIntoView({behavior:'smooth'});}else if(p==='learn'){const s=document.getElementById('explain-strip'); if(s) s.scrollIntoView({behavior:'smooth'}); openTour();}else{const s=document.querySelector('.explainer'); if(s) s.scrollIntoView({behavior:'smooth'});}})});
   const toggleStrip=document.getElementById('toggle-strip');if(toggleStrip) toggleStrip.addEventListener('click',()=>{const s=document.querySelector('.comic');const f=document.querySelector('.strip-foot');if(!s) return; const hid=s.hidden; s.hidden=!hid; if(f) f.hidden=!hid; toggleStrip.textContent=hid?'Hide':'Show';});
 })();
