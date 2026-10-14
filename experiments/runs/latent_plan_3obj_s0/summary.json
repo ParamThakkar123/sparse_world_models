@@ -1,0 +1,12 @@
+{
+  "best_epoch": 20,
+  "best_val_metrics": {
+    "consistency": 0.052630288307239106,
+    "prediction": 0.06890716111020108,
+    "reconstruction": 0.007306929431329511,
+    "total": 0.12884437861959794
+  },
+  "best_val_prediction": 0.06890716111020108,
+  "checkpoint": "models\\checkpoints\\latent_plan_3obj_s0.pt",
+  "num_parameters": 274569
+}

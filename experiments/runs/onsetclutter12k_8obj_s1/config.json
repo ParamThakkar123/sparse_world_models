@@ -1,0 +1,12 @@
+{
+  "episodes": 12000,
+  "max_steps": 100,
+  "min_object_separation": 0.07,
+  "num_objects": 8,
+  "object_bound": 0.26,
+  "output": "data\\transitions\\onsetclutter12k_8obj_s1.npz",
+  "policy": "scripted",
+  "seed": 1,
+  "simulator": "clutter",
+  "task": "tabletop_pushing"
+}

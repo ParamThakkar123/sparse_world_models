@@ -1,0 +1,12 @@
+{
+  "episodes": 2500,
+  "max_steps": 100,
+  "min_object_separation": 0.07,
+  "num_objects": 5,
+  "object_bound": 0.26,
+  "output": "data\\transitions\\_interaction_tmp\\clutter_5obj_s0_c5.npz",
+  "policy": "scripted",
+  "seed": 5,
+  "simulator": "clutter",
+  "task": "tabletop_pushing"
+}

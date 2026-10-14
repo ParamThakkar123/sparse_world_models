@@ -1,0 +1,12 @@
+{
+  "episodes": 1500,
+  "max_steps": 100,
+  "min_object_separation": 0.09,
+  "num_objects": 3,
+  "object_bound": 0.26,
+  "output": "data\\transitions\\onset_3obj_s3.npz",
+  "policy": "scripted",
+  "seed": 3,
+  "simulator": "tabletop",
+  "task": "tabletop_pushing"
+}

@@ -1,0 +1,19 @@
+{
+  "counts": [
+    3,
+    5,
+    8,
+    12,
+    20
+  ],
+  "geometry": "bounds +-0.26, separation 0.09, identical for every count",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "tag": "uni",
+  "task": "scale_analysis"
+}

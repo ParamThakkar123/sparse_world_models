@@ -1,0 +1,77 @@
+{
+  "conditions": {
+    "cswm": {
+      "mean_final_distance": 0.3091035543383115,
+      "mean_plan_time_ms_per_step": 270.8583637500002,
+      "mean_steps_on_success": NaN,
+      "num_episodes": 20,
+      "success_rate": 0.0
+    },
+    "dense": {
+      "mean_final_distance": 0.33258897683920646,
+      "mean_plan_time_ms_per_step": 86.37465608333135,
+      "mean_steps_on_success": NaN,
+      "num_episodes": 20,
+      "success_rate": 0.0
+    },
+    "gns": {
+      "mean_final_distance": 0.30957398400663444,
+      "mean_plan_time_ms_per_step": 562.6740571666567,
+      "mean_steps_on_success": NaN,
+      "num_episodes": 20,
+      "success_rate": 0.0
+    },
+    "latent": {
+      "mean_final_distance": 0.27923043505074374,
+      "mean_plan_time_ms_per_step": 231.05372783333678,
+      "mean_steps_on_success": 10.0,
+      "num_episodes": 20,
+      "success_rate": 0.05
+    },
+    "nps": {
+      "mean_final_distance": 0.2379285163834528,
+      "mean_plan_time_ms_per_step": 272.2703023662842,
+      "mean_steps_on_success": 20.0,
+      "num_episodes": 20,
+      "success_rate": 0.2
+    },
+    "pets": {
+      "mean_final_distance": 0.14858165732102724,
+      "mean_plan_time_ms_per_step": 319.76608230647616,
+      "mean_steps_on_success": 17.2,
+      "num_episodes": 20,
+      "success_rate": 0.25
+    },
+    "random": {
+      "mean_final_distance": 0.3160944396254896,
+      "mean_plan_time_ms_per_step": 0.7032190833312295,
+      "mean_steps_on_success": NaN,
+      "num_episodes": 20,
+      "success_rate": 0.0
+    },
+    "scripted": {
+      "mean_final_distance": 0.0417529156917986,
+      "mean_plan_time_ms_per_step": 0.7621506770947398,
+      "mean_steps_on_success": 28.0,
+      "num_episodes": 20,
+      "success_rate": 1.0
+    },
+    "slotformer": {
+      "mean_final_distance": 0.21316916709705694,
+      "mean_plan_time_ms_per_step": 326.0920368376493,
+      "mean_steps_on_success": 49.5,
+      "num_episodes": 20,
+      "success_rate": 0.1
+    },
+    "sparse": {
+      "mean_final_distance": 0.17241876948047463,
+      "mean_plan_time_ms_per_step": 164.88977316908705,
+      "mean_steps_on_success": 30.333333333333332,
+      "num_episodes": 20,
+      "success_rate": 0.3
+    }
+  },
+  "results_csv": "experiments\\runs\\planning_literature_3obj\\planning_results.csv",
+  "results_md": "experiments\\runs\\planning_literature_3obj\\planning_results.md",
+  "sparse_beats_dense_success": true
+}

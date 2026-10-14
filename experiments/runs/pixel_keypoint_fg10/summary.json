@@ -1,0 +1,26 @@
+{
+  "filter_mode": "motion",
+  "oneframe_beats_twoframe_on_onset": true,
+  "per_condition": {
+    "slot_oneframe": {
+      "f1": 0.8600508905852418,
+      "match_distance_px": 20.278663044029035,
+      "onset_f1": 0.5300353356890459,
+      "recall": 0.8688946015424165
+    },
+    "slot_twoframe": {
+      "f1": 0.8725674827369743,
+      "match_distance_px": 20.278663044029035,
+      "onset_f1": 0.5211267605633803,
+      "recall": 0.8933161953727506
+    },
+    "trivial_pixel": {
+      "f1": 0.576118178087813,
+      "match_distance_px": 20.278663044029035,
+      "onset_f1": 0.09917355371900827,
+      "recall": 0.9023136246786633
+    }
+  },
+  "trivial_beats_learned_on_this_benchmark": false,
+  "twoframe_beats_oneframe_on_f1": true
+}

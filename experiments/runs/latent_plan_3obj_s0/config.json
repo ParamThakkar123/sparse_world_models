@@ -1,0 +1,17 @@
+{
+  "action_dim": 2,
+  "consistency_weight": 1.0,
+  "epochs": 25,
+  "hidden_dim": 256,
+  "latent_dim": 64,
+  "lr": 0.001,
+  "model": "LatentDynamicsModel",
+  "num_layers": 3,
+  "num_objects": 3,
+  "num_parameters": 274569,
+  "reconstruction_weight": 1.0,
+  "seed": 0,
+  "state_dim": 31,
+  "train_split": "data\\transitions\\splits_plan_mixed_3obj\\plan_mixed_3obj_train.npz",
+  "val_split": "data\\transitions\\splits_plan_mixed_3obj\\plan_mixed_3obj_val.npz"
+}

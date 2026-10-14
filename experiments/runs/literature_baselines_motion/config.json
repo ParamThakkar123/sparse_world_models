@@ -1,0 +1,35 @@
+{
+  "attention_blocks": 2,
+  "attention_heads": 4,
+  "baselines": [
+    "gns",
+    "cswm",
+    "slotformer",
+    "pets",
+    "nps"
+  ],
+  "batch_size": 128,
+  "capacity_match": true,
+  "checkpoint_dir": null,
+  "checkpoint_tag": "lit",
+  "counts": [
+    3,
+    5,
+    8
+  ],
+  "device": "cpu",
+  "ensemble_size": 5,
+  "epochs": 25,
+  "feature_mode": "global",
+  "lr": 0.001,
+  "message_passing_steps": 3,
+  "num_layers": 2,
+  "num_rules": 4,
+  "run_name": "literature_baselines_motion",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "split_template": "data/transitions/splits_clean_{n}obj_s{seed}/scale_{n}obj_s{seed}_hard_{split}.npz"
+}

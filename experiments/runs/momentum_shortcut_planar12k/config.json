@@ -1,0 +1,16 @@
+{
+  "counts": [
+    3,
+    5,
+    8
+  ],
+  "rest_speed": 2.55e-05,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "task": "momentum_shortcut"
+}

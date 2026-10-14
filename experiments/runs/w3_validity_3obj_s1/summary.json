@@ -1,0 +1,33 @@
+{
+  "count": 3,
+  "seed": 1,
+  "validity": {
+    "learned_gate": {
+      "mean_objects_per_splice": 1.4465020576131686,
+      "objects_relocated": 703,
+      "others_match_fraction": 0.9629629629629629,
+      "per_object_stationary_fraction": 0.9246088193456614,
+      "relocated_stationary_fraction": 0.9444444444444444,
+      "splices": 486,
+      "valid_fraction": 0.911522633744856
+    },
+    "no_mask": {
+      "mean_objects_per_splice": 3.0,
+      "objects_relocated": 1671,
+      "others_match_fraction": 1.0,
+      "per_object_stationary_fraction": 0.8312387791741472,
+      "relocated_stationary_fraction": 0.7055655296229802,
+      "splices": 557,
+      "valid_fraction": 0.7055655296229802
+    },
+    "oracle_mask": {
+      "mean_objects_per_splice": 1.456140350877193,
+      "objects_relocated": 664,
+      "others_match_fraction": 0.9890350877192983,
+      "per_object_stationary_fraction": 0.9442771084337349,
+      "relocated_stationary_fraction": 0.9583333333333334,
+      "splices": 456,
+      "valid_fraction": 0.9473684210526315
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "episodes": 3,
+  "max_steps": 20,
+  "min_object_separation": 0.07,
+  "num_objects": 3,
+  "object_bound": 0.26,
+  "output": "data\\transitions\\_smoke_clutter_onset.npz",
+  "policy": "scripted",
+  "seed": 0,
+  "simulator": "clutter",
+  "task": "tabletop_pushing"
+}

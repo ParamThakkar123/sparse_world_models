@@ -1,0 +1,25 @@
+{
+  "counts": [
+    3,
+    5,
+    8
+  ],
+  "domains": [
+    "tabletop",
+    "planar",
+    "billiards",
+    "clutter"
+  ],
+  "episodes": 60,
+  "max_steps": 100,
+  "min_object_separation": 0.09,
+  "object_bound": 0.26,
+  "policy": "scripted",
+  "rest_speed": 2.55e-05,
+  "run_name": "domain_characterization",
+  "seeds": [
+    0,
+    1,
+    2
+  ]
+}

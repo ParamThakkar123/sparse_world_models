@@ -1,0 +1,28 @@
+{
+  "benchmarks": [
+    "onsetplanar12k"
+  ],
+  "contact_gate_templates": [
+    "onsetplanar12k=models/checkpoints/sparse_onsetplanar12k_contact_{n}obj_s{seed}.pt"
+  ],
+  "counts": [
+    3,
+    5,
+    8
+  ],
+  "device": "cpu",
+  "gate_templates": [
+    "onsetplanar12k=models/checkpoints/sparse_onsetplanar12k_{n}obj_s{seed}.pt"
+  ],
+  "run_name": "audit_planar12k",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "split_templates": [
+    "onsetplanar12k=data/transitions/splits_onsetplanar12k_{n}obj_s{seed}/onsetplanar12k_{n}obj_s{seed}_hard_{split}.npz"
+  ]
+}

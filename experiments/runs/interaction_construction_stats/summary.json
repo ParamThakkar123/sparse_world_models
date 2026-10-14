@@ -1,0 +1,141 @@
+{
+  "published": {
+    "median_indirect": 0.151,
+    "median_nearest": 0.061,
+    "nearest_also_moves": 0.944
+  },
+  "all_9_cells_N3_5_8": {
+    "rows": 7296,
+    "fraction_rows_with_indirect_onset": 1.0,
+    "median_indirect_mover_distance_to_actuator": 0.14314347505569458,
+    "median_nearest_object_distance_to_actuator": 0.06090569496154785,
+    "fraction_rows_nearest_object_also_moves": 0.9283168859649122,
+    "variant_pre_action_pusher": {
+      "median_indirect_mover_distance": 0.17140987515449524,
+      "median_nearest_object_distance": 0.08299760520458221
+    },
+    "variant_nearest_object_moving_at_t": 0.9030975877192983
+  },
+  "audited_cells_N5_8": {
+    "rows": 6320,
+    "fraction_rows_with_indirect_onset": 1.0,
+    "median_indirect_mover_distance_to_actuator": 0.14198803901672363,
+    "median_nearest_object_distance_to_actuator": 0.059055835008621216,
+    "fraction_rows_nearest_object_also_moves": 0.9248417721518988,
+    "variant_pre_action_pusher": {
+      "median_indirect_mover_distance": 0.1698140650987625,
+      "median_nearest_object_distance": 0.08065193146467209
+    },
+    "variant_nearest_object_moving_at_t": 0.8963607594936709
+  },
+  "per_cell": {
+    "3obj_s0": {
+      "rows": 339,
+      "fraction_rows_with_indirect_onset": 1.0,
+      "median_indirect_mover_distance_to_actuator": 0.1553216576576233,
+      "median_nearest_object_distance_to_actuator": 0.0766347125172615,
+      "fraction_rows_nearest_object_also_moves": 0.9587020648967551,
+      "variant_pre_action_pusher": {
+        "median_indirect_mover_distance": 0.1910952776670456,
+        "median_nearest_object_distance": 0.0992676243185997
+      },
+      "variant_nearest_object_moving_at_t": 0.9528023598820059
+    },
+    "3obj_s1": {
+      "rows": 345,
+      "fraction_rows_with_indirect_onset": 1.0,
+      "median_indirect_mover_distance_to_actuator": 0.14812350273132324,
+      "median_nearest_object_distance_to_actuator": 0.07555493712425232,
+      "fraction_rows_nearest_object_also_moves": 0.9449275362318841,
+      "variant_pre_action_pusher": {
+        "median_indirect_mover_distance": 0.18203526735305786,
+        "median_nearest_object_distance": 0.10497582703828812
+      },
+      "variant_nearest_object_moving_at_t": 0.9449275362318841
+    },
+    "3obj_s2": {
+      "rows": 292,
+      "fraction_rows_with_indirect_onset": 1.0,
+      "median_indirect_mover_distance_to_actuator": 0.15353964269161224,
+      "median_nearest_object_distance_to_actuator": 0.07909858226776123,
+      "fraction_rows_nearest_object_also_moves": 0.9486301369863014,
+      "variant_pre_action_pusher": {
+        "median_indirect_mover_distance": 0.18085289001464844,
+        "median_nearest_object_distance": 0.10875599831342697
+      },
+      "variant_nearest_object_moving_at_t": 0.9417808219178082
+    },
+    "5obj_s0": {
+      "rows": 743,
+      "fraction_rows_with_indirect_onset": 1.0,
+      "median_indirect_mover_distance_to_actuator": 0.14440351724624634,
+      "median_nearest_object_distance_to_actuator": 0.06236456707119942,
+      "fraction_rows_nearest_object_also_moves": 0.9340511440107672,
+      "variant_pre_action_pusher": {
+        "median_indirect_mover_distance": 0.17242249846458435,
+        "median_nearest_object_distance": 0.08719964325428009
+      },
+      "variant_nearest_object_moving_at_t": 0.9152086137281292
+    },
+    "5obj_s1": {
+      "rows": 739,
+      "fraction_rows_with_indirect_onset": 1.0,
+      "median_indirect_mover_distance_to_actuator": 0.14398792386054993,
+      "median_nearest_object_distance_to_actuator": 0.06670325994491577,
+      "fraction_rows_nearest_object_also_moves": 0.9147496617050067,
+      "variant_pre_action_pusher": {
+        "median_indirect_mover_distance": 0.172247514128685,
+        "median_nearest_object_distance": 0.09023664146661758
+      },
+      "variant_nearest_object_moving_at_t": 0.8958051420838972
+    },
+    "5obj_s2": {
+      "rows": 722,
+      "fraction_rows_with_indirect_onset": 1.0,
+      "median_indirect_mover_distance_to_actuator": 0.14287781715393066,
+      "median_nearest_object_distance_to_actuator": 0.06463813781738281,
+      "fraction_rows_nearest_object_also_moves": 0.9210526315789473,
+      "variant_pre_action_pusher": {
+        "median_indirect_mover_distance": 0.17369666695594788,
+        "median_nearest_object_distance": 0.0870477557182312
+      },
+      "variant_nearest_object_moving_at_t": 0.907202216066482
+    },
+    "8obj_s0": {
+      "rows": 1384,
+      "fraction_rows_with_indirect_onset": 1.0,
+      "median_indirect_mover_distance_to_actuator": 0.14029476046562195,
+      "median_nearest_object_distance_to_actuator": 0.05726611986756325,
+      "fraction_rows_nearest_object_also_moves": 0.9255780346820809,
+      "variant_pre_action_pusher": {
+        "median_indirect_mover_distance": 0.16623157262802124,
+        "median_nearest_object_distance": 0.07907617092132568
+      },
+      "variant_nearest_object_moving_at_t": 0.8916184971098265
+    },
+    "8obj_s1": {
+      "rows": 1335,
+      "fraction_rows_with_indirect_onset": 1.0,
+      "median_indirect_mover_distance_to_actuator": 0.1381266713142395,
+      "median_nearest_object_distance_to_actuator": 0.05520252138376236,
+      "fraction_rows_nearest_object_also_moves": 0.9235955056179775,
+      "variant_pre_action_pusher": {
+        "median_indirect_mover_distance": 0.16646111011505127,
+        "median_nearest_object_distance": 0.07834271341562271
+      },
+      "variant_nearest_object_moving_at_t": 0.8868913857677903
+    },
+    "8obj_s2": {
+      "rows": 1397,
+      "fraction_rows_with_indirect_onset": 1.0,
+      "median_indirect_mover_distance_to_actuator": 0.1436110883951187,
+      "median_nearest_object_distance_to_actuator": 0.05603102222084999,
+      "fraction_rows_nearest_object_also_moves": 0.9277022190408017,
+      "variant_pre_action_pusher": {
+        "median_indirect_mover_distance": 0.1708773672580719,
+        "median_nearest_object_distance": 0.0774991437792778
+      },
+      "variant_nearest_object_moving_at_t": 0.8947745168217609
+    }
+  }
+}

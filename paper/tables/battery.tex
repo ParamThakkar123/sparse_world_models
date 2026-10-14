@@ -1,0 +1,18 @@
+\begin{tabular}{llrrrr}
+\toprule
+rule & params & motion & onset & interaction & clutter-onset \\
+\midrule
+\texttt{already\_moving} (velocity) & 0 & 0.866 & 0.182 & 0.783 & 0.449 \\
+\texttt{nearest\_to\_pusher} (geometry) & 0 & 0.836 & 0.928 & 0.437 & 0.656 \\
+\texttt{pusher\_near} (contact radius) & 1 & 0.812 & 0.932 & 0.715 & 0.698 \\
+\texttt{near\_a\_mover} (propagated) & 1 & 0.263 & 0.210 & 0.712 & 0.441 \\
+\texttt{moving\_or\_near} & 1 & 0.927 & 0.961 & 0.858 & 0.821 \\
+\texttt{moving\_or\_near\_mover} & 1 & 0.866 & 0.302 & 0.955 & 0.579 \\
+\texttt{logistic\_on\_distance} (learned) & 2 & 0.810 & 0.919 & 0.731 & 0.577 \\
+\texttt{always\_change} (degeneracy floor) & 0 & 0.413 & 0.387 & 0.673 & 0.485 \\
+\midrule
+\textbf{best trivial rule} & & \textbf{0.927} & \textbf{0.961} & \textbf{0.955} & \textbf{0.821} \\
+learned gate (velocity features) & $\sim$7k & 0.824 & 0.508 & 0.709 & 0.425 \\
+learned gate (velocity-free) & $\sim$7k & 0.688 & 0.703 & 0.772 & 0.338 \\
+\bottomrule
+\end{tabular}

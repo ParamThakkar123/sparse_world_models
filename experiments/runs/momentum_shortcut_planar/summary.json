@@ -1,0 +1,58 @@
+{
+  "onset_f1": {
+    "gate_contact": null,
+    "gate_global": 0.03144001982456373,
+    "trivial_already_moving": 0.0
+  },
+  "per_count": {
+    "3obj": {
+      "gate_global": {
+        "f1_all": 0.7362334211955134,
+        "f1_moving": 0.8643119537132308,
+        "f1_onset": 0.0091324200913242
+      },
+      "trivial_already_moving": {
+        "f1_all": 0.9895775305659026,
+        "f1_moving": 0.995804553090338,
+        "f1_onset": 0.0
+      }
+    },
+    "5obj": {
+      "gate_global": {
+        "f1_all": 0.6202103809049073,
+        "f1_moving": 0.8649799938442597,
+        "f1_onset": 0.05096981584395773
+      },
+      "trivial_already_moving": {
+        "f1_all": 0.9680555908737937,
+        "f1_moving": 0.987730863611976,
+        "f1_onset": 0.0
+      }
+    },
+    "8obj": {
+      "gate_global": {
+        "f1_all": 0.4357545989573155,
+        "f1_moving": 0.8359756165995673,
+        "f1_onset": 0.03421782353840927
+      },
+      "trivial_already_moving": {
+        "f1_all": 0.9442805895328181,
+        "f1_moving": 0.9820330114102559,
+        "f1_onset": 0.0
+      }
+    }
+  },
+  "skipped": [
+    "models\\checkpoints\\__no_planar_motion_contact_gate__3_0.pt",
+    "models\\checkpoints\\__no_planar_motion_contact_gate__3_1.pt",
+    "models\\checkpoints\\__no_planar_motion_contact_gate__3_2.pt",
+    "models\\checkpoints\\__no_planar_motion_contact_gate__5_0.pt",
+    "models\\checkpoints\\__no_planar_motion_contact_gate__5_1.pt",
+    "models\\checkpoints\\__no_planar_motion_contact_gate__5_2.pt",
+    "models\\checkpoints\\__no_planar_motion_contact_gate__8_0.pt",
+    "models\\checkpoints\\__no_planar_motion_contact_gate__8_1.pt",
+    "models\\checkpoints\\__no_planar_motion_contact_gate__8_2.pt"
+  ],
+  "trivial_baseline_beats_learned_gate_on_headline_metric": true,
+  "velocity_free_beats_velocity_based_on_onset": null
+}

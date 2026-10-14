@@ -1,0 +1,8 @@
+{
+  "task": "interaction_construction_stats",
+  "env": "billiards",
+  "threshold": 0.031,
+  "rest_speed": 2.55e-05,
+  "splits": "data/transitions/splits_interaction_billiards_{n}obj_s{seed}",
+  "definition": "indirect = at-rest & changed & |dxy|>=0.031 & not nearest to post-action pusher; 'also moves' = nearest object's object_change_mask"
+}

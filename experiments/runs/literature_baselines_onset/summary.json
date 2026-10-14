@@ -1,0 +1,159 @@
+{
+  "baselines_beaten_by_trivial_rule": [],
+  "citations": {
+    "cswm": "Kipf, van der Pol & Welling, ICLR 2020",
+    "gns": "Sanchez-Gonzalez et al. 2020 / Li et al. 2019",
+    "nps": "Goyal et al., NeurIPS 2021",
+    "pets": "Chua et al., NeurIPS 2018",
+    "slotformer": "Wu et al., ICLR 2023"
+  },
+  "cswm_native": {
+    "hits_at_1": 0.8840008907847934,
+    "mrr": 0.9194261034329733
+  },
+  "every_ungated_baseline_is_degenerate": true,
+  "per_count": {
+    "3obj": {
+      "cswm": {
+        "f1": 0.5263612468539026,
+        "onset_f1": 0.5141483155335344,
+        "recall": 1.0,
+        "unchanged_object_l2": 0.09391760329405467
+      },
+      "gns": {
+        "f1": 0.5263612468539026,
+        "onset_f1": 0.5141483155335344,
+        "recall": 1.0,
+        "unchanged_object_l2": 0.09917820741732915
+      },
+      "no_op": {
+        "f1": 0.0,
+        "onset_f1": 0.0,
+        "recall": 0.0,
+        "unchanged_object_l2": 6.296003457251231e-06
+      },
+      "nps": {
+        "f1": 0.5263612468539026,
+        "onset_f1": 0.5141483155335344,
+        "recall": 1.0,
+        "unchanged_object_l2": 0.1065707157055537
+      },
+      "pets": {
+        "f1": 0.5263612468539026,
+        "onset_f1": 0.5141483155335344,
+        "recall": 1.0,
+        "unchanged_object_l2": 0.10011701037486394
+      },
+      "slotformer": {
+        "f1": 0.5263612468539026,
+        "onset_f1": 0.5141483155335344,
+        "recall": 1.0,
+        "unchanged_object_l2": 0.11984982589880626
+      },
+      "trivial_velocity": {
+        "f1": 0.10921717171717171,
+        "onset_f1": 0.0,
+        "recall": 0.059167087392893856,
+        "unchanged_object_l2": null
+      }
+    },
+    "5obj": {
+      "cswm": {
+        "f1": 0.3688438438438438,
+        "onset_f1": 0.347507038888707,
+        "recall": 1.0,
+        "unchanged_object_l2": 0.06809604167938232
+      },
+      "gns": {
+        "f1": 0.368658938817789,
+        "onset_f1": 0.34732482192681546,
+        "recall": 1.0,
+        "unchanged_object_l2": 0.06777364015579224
+      },
+      "no_op": {
+        "f1": 0.0,
+        "onset_f1": 0.0,
+        "recall": 0.0,
+        "unchanged_object_l2": 8.878151523579922e-06
+      },
+      "nps": {
+        "f1": 0.368658938817789,
+        "onset_f1": 0.34732482192681546,
+        "recall": 1.0,
+        "unchanged_object_l2": 0.06457684685786565
+      },
+      "pets": {
+        "f1": 0.368658938817789,
+        "onset_f1": 0.34732482192681546,
+        "recall": 1.0,
+        "unchanged_object_l2": 0.07093495875597
+      },
+      "slotformer": {
+        "f1": 0.368658938817789,
+        "onset_f1": 0.34732482192681546,
+        "recall": 1.0,
+        "unchanged_object_l2": 0.08493516594171524
+      },
+      "trivial_velocity": {
+        "f1": 0.1738308553616165,
+        "onset_f1": 0.0,
+        "recall": 0.0991904725124776,
+        "unchanged_object_l2": null
+      }
+    },
+    "8obj": {
+      "cswm": {
+        "f1": 0.2710389577699001,
+        "onset_f1": 0.2372250453014281,
+        "recall": 1.0,
+        "unchanged_object_l2": 0.06362007806698482
+      },
+      "gns": {
+        "f1": 0.27094971932356554,
+        "onset_f1": 0.23714286065393467,
+        "recall": 1.0,
+        "unchanged_object_l2": 0.06736183042327563
+      },
+      "no_op": {
+        "f1": 0.0,
+        "onset_f1": 0.0,
+        "recall": 0.0,
+        "unchanged_object_l2": 7.474080078395673e-06
+      },
+      "nps": {
+        "f1": 0.2711028381929435,
+        "onset_f1": 0.23728582926976993,
+        "recall": 1.0,
+        "unchanged_object_l2": 0.060955112179120384
+      },
+      "pets": {
+        "f1": 0.27094971932356554,
+        "onset_f1": 0.23714286065393467,
+        "recall": 1.0,
+        "unchanged_object_l2": 0.06672952324151993
+      },
+      "slotformer": {
+        "f1": 0.27094971932356554,
+        "onset_f1": 0.23714286065393467,
+        "recall": 1.0,
+        "unchanged_object_l2": 0.08170326302448909
+      },
+      "trivial_velocity": {
+        "f1": 0.27959408826139404,
+        "onset_f1": 0.0,
+        "recall": 0.1751217126217126,
+        "unchanged_object_l2": null
+      }
+    }
+  },
+  "pets_disagreement_auc": 0.5273671611509592,
+  "recall_by_ungated_baseline": {
+    "cswm": 1.0,
+    "gns": 1.0,
+    "nps": 1.0,
+    "pets": 1.0,
+    "slotformer": 1.0
+  },
+  "skipped": [],
+  "trivial_rule_f1": 0.18754737178006076
+}

@@ -1,0 +1,15 @@
+\begin{tabular}{lrrrrrr}
+\toprule
+& \multicolumn{3}{c}{motion benchmark} & \multicolumn{3}{c}{onset benchmark} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+model & F1 & onset F1 & recall & F1 & onset F1 & recall \\
+\midrule
+\textbf{trivial: already moving} & \textbf{0.866} & \textbf{0.000} & \textbf{0.833} & \textbf{0.182} & \textbf{0.000} & \textbf{0.108} \\
+\midrule
+GNS / DPI-Net \citep{sanchezgonzalez2020gns,li2019dpinet} & 0.414 & 0.109 & 1.000 & 0.387 & 0.365 & 1.000 \\
+C-SWM \citep{kipf2020cswm} & 0.413 & 0.109 & 0.999 & 0.387 & 0.365 & 1.000 \\
+SlotFormer \citep{wu2023slotformer} & 0.414 & 0.109 & 1.000 & 0.387 & 0.365 & 1.000 \\
+PETS \citep{chua2018pets} & 0.414 & 0.109 & 1.000 & 0.387 & 0.365 & 1.000 \\
+NPS \citep{goyal2021nps} & 0.414 & 0.109 & 1.000 & 0.387 & 0.365 & 1.000 \\
+\bottomrule
+\end{tabular}

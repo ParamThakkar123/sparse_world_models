@@ -1,0 +1,26 @@
+{
+  "benchmarks": [
+    "dense"
+  ],
+  "contact_gate_templates": [
+    "dense=models/checkpoints/sparse_contact_clean_{n}obj_dense_s{seed}.pt"
+  ],
+  "counts": [
+    3,
+    5,
+    8
+  ],
+  "device": "cpu",
+  "gate_templates": [
+    "dense=models/checkpoints/sparse_clean_{n}obj_dense_s{seed}.pt"
+  ],
+  "run_name": "audit_dense_packed",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "split_templates": [
+    "dense=data/transitions/splits_clean_{n}obj_dense_s{seed}/scale_{n}obj_dense_s{seed}_hard_{split}.npz"
+  ]
+}
