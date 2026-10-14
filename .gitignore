@@ -33,4 +33,17 @@ Thumbs.db
 paper/main.pdf
 models/checkpoints/*.pt
 !models/checkpoints/README.md
-experiments/runs/
+# Run artifacts. The bulk (checkpoints, per-step metrics, plots) is regenerable and large, so
+# it stays out -- but summary.json and config.json are what every claim in RESULTS.md and every
+# table in paper/ actually points at, and losing them is how this project ended up unable to
+# trace its own headline numbers. They are small; they are tracked.
+experiments/runs/**
+!experiments/runs/**/
+!experiments/runs/**/summary.json
+!experiments/runs/**/config.json
+
+# Anonymised supplementary archive (rebuild with experiments/make_supplementary.py)
+dist/
+
+# Browser-automation tool logs
+.playwright-mcp/

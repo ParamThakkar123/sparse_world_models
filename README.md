@@ -9,16 +9,34 @@ repository now documents both what failed and what replaced it.
 
 > Change-detection benchmarks in object-centric manipulation are **pervasively degenerate**.
 > Three successive benchmarks — motion-filtered, onset-filtered, interaction-filtered — each
-> remove their predecessor's shortcut, and each is then won by a *different* one-line rule at
-> F1 **0.93–0.96**. Five published object-centric world models plus our own lose to all three.
-> The field does not run trivial baselines, and every "our model predicts what changes" claim
-> in this literature is unvalidated until it does.
+> demonstrably destroy their predecessor's shortcut, and each is then won by *some* one-line
+> rule at F1 **0.93–0.96**. Five published object-centric world models plus our own lose to
+> all three. A fourth benchmark, built to attack the underlying mechanism by packing the scene,
+> is the only one that lowers the ceiling (to **0.821**) — and it lowers the learned models
+> further (to **0.425**). The field does not run trivial baselines, and every "our model
+> predicts what changes" claim in this literature is unvalidated until it does.
 
-| benchmark | shortcut it removes | one-liner that wins instead | best trivial F1 | best learned gate |
-|---|---|---|---|---|
-| motion | — | `already_moving` (velocity) | **0.927** | 0.825 |
-| onset | velocity | `nearest_to_pusher` (**0 parameters**) | **0.961** | 0.694 |
-| interaction | geometry | `moving_or_near_mover` (propagated kinematics) | **0.955** | 0.772 |
+| benchmark | shortcut it removes | what it does to the previous winner | one-liner that wins instead | best trivial F1 | best learned gate |
+|---|---|---|---|---|---|
+| motion | — | — | `moving_or_near` (1 param) | **0.927** | 0.823 |
+| onset | velocity | `already_moving` 0.866 → **0.182** | `moving_or_near` (1 param); `nearest_to_pusher` **0 params** at 0.928 | **0.961** | 0.717 |
+| interaction | geometry | `nearest_to_pusher` 0.928 → **0.437** | `moving_or_near_mover` (propagated) | **0.955** | 0.772 |
+| **clutter-onset** | *the mechanism itself: dense packing, so proximity is ambiguous* | `nearest_to_pusher` 0.928 → **0.656** | `moving_or_near` (1 param) | **0.821** | **0.425** |
+
+> **The fourth row is the one that moves, and it does not move the way a fix would.** Dense
+> packing is the only manipulation in this project that lowers the trivial ceiling below 0.93
+> — and it lowers the *learned* gate further still, to 0.425, opening the widest margin here
+> (−0.396 against −0.104 on motion and −0.244 on onset). Harder is not the same as
+> discriminative. Landed 2026-09-03 at 12000 episodes/cell (697–1225 train rows); the earlier
+> 1500-episode attempt is recorded in `RESULTS.md` as underpowered and must not be quoted.
+
+> **Corrected 2026-09-03.** This table previously named `already_moving` (0.927) and
+> `nearest_to_pusher` (0.961) as the winners of the first two benchmarks. Those *values* are
+> the best-trivial column; both belong to `moving_or_near`. `already_moving` scores 0.866 on
+> motion and `nearest_to_pusher` 0.928 on onset. The correction costs the reading that each
+> filter is beaten by a different rule family — the same one-parameter rule tops motion and
+> onset — and costs nothing else. See the boxed note in `experiments/RESULTS.md`,
+> "The pattern is the result". Motion and onset are five seeds; interaction is three.
 
 The deliverable is `experiments/onset_shortcut_audit.py` — eleven parameter-free or
 one-parameter rules, five of them invented *against* the interaction benchmark before it was
@@ -134,6 +152,8 @@ evaluation on existing `.npz` files work without it.
 | `build_interaction_benchmark.py`, `interaction_pipeline.sh` | The third benchmark (indirect, chain-driven onset) and its audit |
 | `momentum_shortcut.py` | The original finding: one line of code beats every learned model on the motion benchmark |
 | `audit_battery.py` | Standalone entry point for auditing a **third-party** benchmark (see below) |
+| `make_iclr_tables.py` | Emits the paper's tables and figure **from run artifacts**; a missing run renders as `--`, never as silence |
+| `make_supplementary.py` | Builds the anonymised supplementary archive and **refuses to write it** if any identity string survives |
 
 ### The four-domain suite
 

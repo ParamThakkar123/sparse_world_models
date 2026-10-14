@@ -5,6 +5,25 @@
 \documentclass[conference]{IEEEtran}
 \IEEEoverridecommandlockouts
 
+% ---- IEEE copyright notice: deliberately NOT enabled --------------------
+% WORLDS @ IROS 2026 does not ask for one. The workshop takes papers through
+% OpenReview rather than publishing them in IEEE Xplore, so no notice is the
+% correct state, not an oversight.
+%
+% Kept here rather than omitted because the string cannot be invented: the notice
+% carries the proceedings' own ISBN, and a placeholder or guessed number is a
+% worse failure than an absent notice -- it asserts a copyright registration that
+% does not exist, in a document that will be read as a record of one. If the
+% organisers confirm Xplore publication, ask them for the ISBN, substitute it
+% below, and uncomment.
+%
+% \IEEEpubid{\makebox[\columnwidth]{978-1-XXXX-XXXX-X/26/\$31.00~\copyright2026 IEEE \hfill}%
+%            \hspace{\columnsep}\makebox[\columnwidth]{}}
+%
+% ...and add \IEEEpubidadjcol inside the SECOND column of page 1. IEEEtran does
+% not reserve the space on its own; without it the notice overprints body text.
+
+
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{graphicx}
@@ -19,24 +38,47 @@
 
 \newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
 
-% ANONYMIZED for submission (2026-08-07). The published WORLDS @ IROS 2026 call for papers
-% (worlds-iros2026.github.io) states verbatim: "All submissions will undergo double-blind
-% peer review."
+% DE-ANONYMIZED for the camera-ready. The paper is ACCEPTED at WORLDS @ IROS 2026, so the
+% double-blind requirement in the CFP ("All submissions will undergo double-blind peer
+% review", worlds-iros2026.github.io) has been discharged -- it governed the submission,
+% not the final version. The real author block in the \else branch is what ships.
 %
-% This REVERSES the 2026-08-02 note that previously stood here, which asserted the CFP
-% "specifies NO blind-review requirement" and set \anonymousfalse on that basis. That
-% reading was wrong (as was the 2026-07-20 reading, which recorded the CFP as merely
-% *silent* on blinding and left "confirm with organizers" as an open item). The venue is
-% double-blind; a named submission risks desk rejection, which costs far more than the
-% forfeited attribution the old note was weighing.
+% History, kept because this flag was flipped twice on misreadings of the CFP: the
+% 2026-08-02 note read it as specifying NO blind review, and the 2026-07-20 note as merely
+% *silent* on blinding; both were wrong, and the 2026-08-07 pass set \anonymoustrue for
+% the submission on the verbatim text above. Only acceptance makes \anonymousfalse correct.
 %
-% Consequence for \releaseurl below: it must point at an ANONYMIZED mirror (e.g.
-% anonymous.4open.science), not the author's repository, or the blinding is defeated by
-% the footnote.
-%
-% Do NOT flip this back without re-reading the CFP verbatim on the day of submission.
+% Consequence for \releaseurl below: with blinding discharged it now points at the author's
+% real repository. While \anonymoustrue it had to be empty or an anonymized mirror, since
+% the repo tracks this very .tex file and a LICENSE carrying the author's name.
 \newif\ifanonymous
 \anonymousfalse
+
+% ---- PDF metadata -------------------------------------------------------
+% Without these, pdfinfo reports an empty Title and Author: a reader's title bar
+% shows the filename, and anything that indexes the file has nothing to key on.
+%
+% Tied to \ifanonymous deliberately, rather than set once by hand. Metadata is
+% not visible on the page, which is precisely why it leaks -- a double-blind
+% submission whose \author block reads "Anonymous Author(s)" while its pdfauthor
+% carries three real names is de-anonymised by any reader's document-properties
+% pane. That flag has already been flipped twice on misreadings of the CFP (see
+% the note above \anonymousfalse), so this follows it instead of being a second
+% place to remember.
+\ifanonymous
+  \hypersetup{%
+    pdftitle={Modeling What Changes: Sparse, Residual World Models for Object-Centric Manipulation},
+    pdfauthor={Anonymous Author(s)},
+    pdfsubject={Object-centric world models for robotic manipulation},
+    pdfkeywords={world models, object-centric learning, model-based planning, manipulation, conditional computation}}
+\else
+  \hypersetup{%
+    pdftitle={Modeling What Changes: Sparse, Residual World Models for Object-Centric Manipulation},
+    pdfauthor={Param Thakkar, Parsika Paresh Shah, Manisha Sushant Gote},
+    pdfsubject={Object-centric world models for robotic manipulation},
+    pdfkeywords={world models, object-centric learning, model-based planning, manipulation, conditional computation}}
+\fi
+
 
 % RESTORED for submission (2026-08-07). The WORLDS @ IROS 2026 CFP invites "short papers
 % (4 pages + references, with an optional 2-page appendix)" -- the appendix is explicitly
@@ -56,24 +98,23 @@
 
 \begin{document}
 
-% RELEASE URL -- DELIBERATELY EMPTY for the Aug 2026 double-blind submission. No artifact
-% is published yet, so the footnote and the abstract both state release as a FUTURE
-% commitment ("will be released upon publication") rather than a present fact. Empty is
-% now a VALID state that renders correct prose -- it is no longer a TODO tripwire, because
-% there is nothing to trip on.
+% RELEASE URL -- SET for the camera-ready. The repository is public and carries what the
+% \thanks footnote claims: code, data generators, checkpoints (models/checkpoints/*.pt)
+% and machine-readable tables (experiments/paper_tables/*.csv). Verify all four still
+% exist before the final upload; the footnote asserts them as present fact.
 %
-% Deferring the mirror was a deliberate call, not an oversight: publishing the repo as-is
-% would have DEFEATED the anonymization above, since the repo tracks this very .tex file
-% (real author block in the \else branch) and a LICENSE carrying the author's name.
-% Mirroring it would have handed reviewers the identity that \anonymoustrue removes.
+% The prior "CAMERA-READY ACTION (by 2026-09-07)" item here is DONE: the footnote switched
+% itself to the present tense off this macro, and the abstract sentence was changed by hand
+% to match ("Code, data generators, and checkpoints are released at ...").
 %
-% CAMERA-READY ACTION (by 2026-09-07): if the paper is accepted and the code is published,
-% set \releaseurl to the public repository URL. The footnote then switches itself to the
-% present tense automatically; the abstract sentence must be changed BY HAND to match --
-% search the abstract for "will be released upon publication".
+% Empty remains a valid state -- both footnote and abstract would need to revert to the
+% future commitment ("will be released upon publication"), the abstract by hand.
 \newcommand{\releaseurl}{https://github.com/ParamThakkar123/sparse_world_models}
 
-\title{Modeling What Changes: Sparse, Residual World Models\\ for Object-Centric Manipulation
+% TITLE BREAK: the \\ sits after "Residual", not after "Models". With the break after
+% "Models" the first line overfilled and TeX wrapped "Models" down on its own, leaving a
+% one-word orphan line between two full ones. Keep the break here if the title is edited.
+\title{Modeling What Changes: Sparse, Residual\\ World Models for Object-Centric Manipulation
 \thanks{Code, data generators, checkpoints, and machine-readable result tables
 \ifx\releaseurl\empty will be released upon publication\else are released at
 \url{\releaseurl}\fi.}}
@@ -246,11 +287,10 @@ that gap and evaluate the full chain from prediction to control.
   \node[below=1mm of d, font=\scriptsize\itshape] {residual $\in\mathbb{R}^3$};
 \end{tikzpicture}%
 }
-\caption{The sparse/residual head, applied per object with weights shared across
-objects. A gate network emits a change decision $g_i$ (discrete, trained by a
-straight-through estimator); a delta head emits a residual pose increment $\Delta_i$.
-The next pose is the current pose plus the \emph{masked} residual, so objects the
-gate leaves off are copied verbatim.}
+\caption{The sparse/residual head, applied per object with shared weights. A gate emits
+a change decision $g_i$ (discrete, straight-through estimator) and a delta head a
+residual pose increment $\Delta_i$; the next pose adds the \emph{masked} residual, so
+objects the gate leaves off are copied verbatim.}
 \label{fig:arch}
 \end{figure}
 
@@ -322,11 +362,9 @@ $N{=}8$, $0.071\pm0.016$ vs.\ $0.081$ (Tab.~\ref{tab:ladder}); Table~I's 0.081 v
 0.081 is exact equality. On the objects that actually move, App.~\ref{app:oracle}
 gives changed-object $L_2$ 0.466 (sparse) vs.\ 0.470 (no-op) at $N{=}8$ and 0.426 vs.\
 0.446 at $N{=}5$: at or barely above the floor of predicting that nothing moves.
-The mechanism in Sec.~\ref{sec:analysis} is correct and we state it plainly here:
-the win is \emph{not} accurate delta regression, it is \emph{not corrupting the static
-majority} ($L_2^{\text{unch}}$ $0.211\to0.001$ at $N{=}3$ via the gate), with delta
-regression at roughly no-op quality. That is the publishable claim and we headline
-it as such. Change detection sustains F1 0.80--0.87 (precision 0.92--0.97) where dense
+Stated plainly, the win is \emph{not} accurate delta regression but \emph{not corrupting
+the static majority} ($L_2^{\text{unch}}$ $0.211\to0.001$ at $N{=}3$ via the gate), with
+delta regression at roughly no-op quality. Change detection sustains F1 0.80--0.87 (precision 0.92--0.97) where dense
 is degenerate (recall $\approx1$); Fig.~\ref{fig:qual} shows sparse copying the rest
 while dense perturbs the whole scene. A dense-interaction control restores $\sim12\times$
 margin at $N{=}8$, but does not change the mover-level conclusion.
@@ -353,11 +391,10 @@ $N$ & sparse F1 & sparse $L_2$ & dense $L_2$ & params (dense/sparse) \\
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{figures/qualitative.png}
-\caption{Predicted per-object displacement (arrows from current to predicted next
-position) on two example scenes. The sparse model (center) moves only the object that
-truly moves, matching ground truth (left); the dense model (right) hallucinates motion
-on objects that should stay put.}
+\includegraphics[width=0.85\linewidth]{figures/qualitative.png}
+\caption{Predicted per-object displacement (arrows: current to predicted next position),
+two example scenes. Sparse (center) moves only the object that truly moves, matching
+ground truth (left); dense (right) hallucinates motion on objects that should stay put.}
 \label{fig:qual}
 \end{figure}
 
@@ -381,30 +418,27 @@ but the gate is the largest single step (1.7--2.0$\times$) and the only one reac
 below no-op. All three ungated rungs share identical F1 (recall $=1$), but this is
 partly definitional (App.~\ref{app:defs}): ungated masks are derived by thresholding
 regression output at $\epsilon_p{=}10^{-3}$\,m, which any nonzero output clears,
-forcing recall to 1. We therefore report (App.~\ref{app:defs}) dense with a deadband
-and a precision--recall curve over the threshold: dense precision rises only modestly
-before recall collapses, and the F1 gap survives but narrows, so F1 should not be
-read as the primary metric without this caveat. The unchanged-object column shows the
+forcing recall to 1. A deadband sweep and threshold precision--recall curve
+(App.~\ref{app:defs}) show dense precision rising only modestly before recall
+collapses: the F1 gap survives but narrows, so F1 is not the primary
+metric. The unchanged-object column shows the
 mechanism: $0.211 \to 0.111 \to 0.086 \to \mathbf{0.001}$ at $N{=}3$. \textbf{Missing
 rung:} the ladder lacks a dense (non-object-centric) MLP predicting \emph{residuals}
-rather than absolute poses; part of dense's error injection plausibly comes from absolute
-regression under $L_2$ rather than from being monolithic, so attribution between
-``residual'' and ``object-centricity'' is confounded in the dense$\to$\textsc{oc-abs}
-step. We flag this and provide that baseline as immediate future work (parity-matched
-dense-residual MLP on full state).
+rather than absolute poses, so part of dense's error injection may come from absolute
+regression under $L_2$ rather than from being monolithic; attribution between
+``residual'' and ``object-centricity'' is confounded at the dense$\to$\textsc{oc-abs}
+step, and that parity-matched baseline is immediate future work.
 
 \textbf{The bottleneck is regression, not detection.} Feeding the delta head the
-\emph{ground-truth} changed mask (an oracle gate) barely moves changed-object
-$L_2$: perfect detection shaves almost nothing off. So the sparse model wins by
-detecting what changed and \emph{not} injecting error into the unchanged majority, not
-by superior changed-object regression; one-step contact-driven deltas (especially
-rotation) are simply hard. This points at the delta head as the highest-leverage place
-to improve.
+\emph{ground-truth} changed mask (an oracle gate) barely moves changed-object $L_2$.
+So the win comes from detecting what changed and \emph{not} injecting error into the
+unchanged majority, not from superior changed-object regression; one-step
+contact-driven deltas (especially rotation) are simply hard, which makes the delta
+head the highest-leverage target.
 
 \begin{table}[t]
-\caption{Capacity-matched ladder: each rung adds one ingredient. Overall per-object
-$L_2$; the three ungated rungs share one F1 column because their change detection is
-\emph{identical}.}
+\caption{Capacity-matched ladder: each rung adds one ingredient. Overall per-object $L_2$;
+the three ungated rungs share one F1 column, their change detection being identical.}
 \label{tab:ladder}
 \centering \footnotesize \setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}ccccccccc@{}}
@@ -422,31 +456,34 @@ $N$ & dense & \textsc{oc-abs} & \textsc{oc-res} & \textbf{sparse} & no-op & & un
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=0.78\textwidth]{figures/worldmodel.png}
-\caption{Honest world-model properties.
-(a) Rollout $L_2$ vs.\ horizon (3 objects, held out): dense drifts; sparse is far
-better than dense but \emph{worse} than no-op at every horizon (see Tab.~\ref{tab:rollout});
-inset shows mover-only $L_2$ (changed objects only). (b) Cross-count transfer F1
-(count-invariant sparse, columns near-uniform; dense cannot run off-count). (c) Sample
-efficiency (3 objects, seed 0): sparse reaches $\sim$90\% of full-data F1 with 25\%
-data while dense is flat. Panels (b,c) seed 0.}
+% WIDTH/CAPTION are set to hold the body inside 4 pages. This float spans both columns, so
+% every point of height or caption line it gives back frees twice that in body text. Do not
+% enlarge without re-checking that Sec. X still ends on page 4.
+\includegraphics[width=0.60\textwidth]{figures/worldmodel.png}
+\caption{Honest world-model properties (3 objects, held out; seed 0 in b,c).
+(a) Rollout $L_2$ vs.\ horizon: dense drifts; sparse is far better than dense but
+\emph{worse} than no-op at every horizon (Tab.~\ref{tab:rollout}); inset is mover-only
+$L_2$. (b) Cross-count transfer F1: sparse is count-invariant (columns near-uniform),
+dense cannot run off-count. (c) Sample efficiency: sparse reaches $\sim$90\% of
+full-data F1 with 25\% data; dense is flat.}
 \label{fig:worldmodel}
 \end{figure*}
 
 \section{It Is a World Model, Not Just a Regressor}\label{sec:worldmodel}
 \textbf{Rollout (Table~\ref{tab:rollout}, Fig.~\ref{fig:worldmodel}a).} Closing the
+% TRIMMED for the 4-page body: the per-$N$ rollout numbers that stood here repeated
+% Tab. III column for column, and a sentence rejecting the phrase "hugs the no-op floor"
+% duplicated the retired-overclaim point Sec. IX already makes. Every claim is kept.
 loop, dense perturbs every object and drifts; sparse copies unchanged objects and is
-3.4--6.4$\times$ better than dense at horizon 20 at every $N$, but the title claim
-is contradicted by the no-op column: sparse is \emph{uniformly worse than no-op}
-overall (N=3: 0.373 vs.\ 0.277; N=5: 0.293 vs.\ 0.180; N=8: 0.182 vs.\ 0.108).
-``Hugs the no-op floor'' is a generous reading of being worse than it. Decomposition
-makes this explicit: sparse wins on $L_2^{\text{unch}}$ (near 0) and loses or ties on
-$L_2^{\text{ch}}$; we therefore add a mover-only rollout curve (Fig.~\ref{fig:worldmodel}a
-inset) and report horizon-20 $L_2^{\text{ch}}$: at that metric sparse tracks movers
-only at roughly no-op quality, consistent with the one-step result. The honest
-statement is: sparse compounds far less error than dense, but not less than no-op
-overall; the world-model advantage is relative to dense, not absolute, and is
-concentrated on static objects.
+3.4--6.4$\times$ better than dense at horizon 20 at every $N$. The no-op column
+contradicts the title claim, though: sparse is \emph{uniformly worse than no-op}
+overall (Tab.~\ref{tab:rollout}). Decomposition makes this explicit: sparse wins on
+$L_2^{\text{unch}}$ (near 0) and loses or ties on $L_2^{\text{ch}}$; the mover-only
+curve (Fig.~\ref{fig:worldmodel}a inset) and horizon-20 $L_2^{\text{ch}}$ show sparse
+tracking movers only at roughly no-op quality, consistent with the one-step result.
+Honestly stated: sparse compounds far less error than dense but not less than no-op,
+so the world-model advantage is relative to dense and concentrated on static objects,
+not absolute.
 \textbf{Compositional generalization (Fig.~\ref{fig:worldmodel}b).} With a
 count-invariant featurization, a sparse model trained on $N$-object scenes runs on
 $M$-object scenes with zero retraining: off-diagonal (transfer) F1 is 0.827 vs.\ 0.832
@@ -456,15 +493,19 @@ off-count.
 of its full-data F1 with 25 percent of the data, beating dense at every budget.
 
 \begin{table}[t]
-\caption{Autoregressive rollout on held-out trajectories: per-object $L_2$ at horizon
-20 (mean$\pm$std, 3 seeds) and mover-only $L_2^{\text{ch}}$ at H20. Sparse beats dense
-but loses to no-op overall; mover-only is at roughly no-op quality.}
+\caption{Autoregressive rollout, held-out trajectories: per-object $L_2$ at horizon 20
+(mean$\pm$std, 3 seeds) and mover-only $L_2^{\text{ch}}$. Sparse beats dense, loses to
+no-op overall; mover-only is at roughly no-op quality.}
 \label{tab:rollout}
-\centering
-\setlength{\tabcolsep}{3pt}
+\centering \footnotesize \setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}cccccc@{}}
 \toprule
-$N$ & sparse & dense & no-op & sparse vs.\ dense & $L_2^{\text{ch}}$ sparse / no-op \\
+% Last two headers are STACKED. Set on one line each they made the tabular 16.63pt wider
+% than \columnwidth, so the rules overhung the gutter. Shrinking the font does not help --
+% IEEEtran already sets tables at \footnotesize, so the size command below is inert and the
+% natural width is header-driven. Keep these stacked if the columns are edited.
+$N$ & sparse & dense & no-op & \shortstack{sparse\\vs.\ dense} &
+\shortstack{$L_2^{\text{ch}}$\\sparse / no-op} \\
 \midrule
 3 & $0.373 \pm 0.033$ & $1.241 \pm 0.072$ & 0.277 & $3.4\times$ & $0.61 / 0.58$ \\
 5 & $0.293 \pm 0.038$ & $1.097 \pm 0.096$ & 0.180 & $3.8\times$ & $0.71 / 0.68$ \\
@@ -493,10 +534,10 @@ feature mode and retrain on diverse mixed-policy data covering approach angles t
 planner samples. With the planner unchanged (Tab.~\ref{tab:planning}), sparse goes
 0.00 to $0.23\pm0.06$ success and halves final distance, while dense stays at
 $0.00$ at \emph{every} seed. But $0.23\pm0.06$ vs.\ random $0.15$ is not
-significantly better than random (weakest seed exactly 0.15, App.~\ref{app:planseed});
-the honest claim is \emph{not} ``begins to plan'' but ``not significantly better than
-random, but separated from dense at every seed.'' Diverse data does not cure dense's
-hallucination; the separation from dense is the robust finding.
+significantly better than random (weakest seed exactly 0.15, App.~\ref{app:planseed}):
+the robust finding is separation from dense at every seed, \emph{not} that sparse
+``begins to plan.'' Diverse data does not cure dense's
+hallucination.
 
 \begin{table}[t]
 \caption{Planning success (mean $\pm$ std, 3 seeds for learned models; success radius 5\,cm).}
@@ -536,18 +577,18 @@ separation from dense ($0.00$ at every seed). 8-object geometry differs, so cros
 density trends are not perfectly controlled; efficiency is capacity, not wall-clock.
 
 \section{Conclusion and Future Work}
+% TRIMMED for the 4-page body. The numeric ledger that opened this paragraph duplicated the
+% abstract and Sec. V--VIII verbatim; the honesty clauses it carried (no-op parity, rollout
+% below no-op, planning n.s. vs. random) are PRESERVED in sentence two and stated in full in
+% Sec. IX. Do not restore the ledger without re-checking the page budget.
 A per-object gate plus masked residual is a simple bias that \emph{avoids error
-injection}: sparse matches no-op overall and at roughly no-op on movers, but keeps
-F1 0.80--0.87 at 8.6--11.1$\times$ fewer parameters where dense is degenerate, is far
-better than dense in rollout (but still worse than no-op), transfers across counts,
-and is separated from dense in planning ($0.23\pm0.06$ vs.\ $0.00$, vs.\ random
-$0.15$ n.s.) while not significantly beating random. The ladder attributes the largest
-single share to the gate; the oracle diagnostic shows the bottleneck is delta
-regression. Next steps are a dense-residual baseline, a distributional delta head,
-DAgger on planner states, multi-step training, and slot-based encoders to drop the
-structured-state assumption. Stated plainly, this is a change detector that avoids
-corruption, not an accurate mover predictor --- and that, honestly framed, is still
-publishable and interesting.
+injection}: where dense is degenerate, sparse keeps F1 0.80--0.87 at 8.6--11.1$\times$
+fewer parameters, transfers across counts, and is separated from dense in both rollout
+and planning. It does not buy accurate dynamics: overall it only matches no-op, rollout
+stays worse than no-op, planning is not significantly better than random. This is a
+change detector that avoids corruption, not an accurate mover predictor. Next steps:
+a dense-residual baseline, a distributional delta head, DAgger on planner states,
+multi-step training, and slot-based encoders.
 
 % ORDERING: references BEFORE the appendix -- a deliberate override of IEEEtran's default,
 % which emits \appendices ahead of the bibliography. The CFP reads "4 pages + references,
