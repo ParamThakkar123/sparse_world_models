@@ -1,0 +1,100 @@
+{
+ "battery_provenance": {
+  "motion": {
+   "run": "onset_shortcut_audit_5seed",
+   "present": true,
+   "cells": 15,
+   "seeds": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4"
+   ],
+   "counts": [
+    "3",
+    "5",
+    "8"
+   ],
+   "gate_cells": 15
+  },
+  "onset": {
+   "run": "onset_shortcut_audit_5seed",
+   "present": true,
+   "cells": 15,
+   "seeds": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4"
+   ],
+   "counts": [
+    "3",
+    "5",
+    "8"
+   ],
+   "gate_cells": 15
+  },
+  "interaction": {
+   "run": "audit_interaction_billiards",
+   "present": true,
+   "cells": 6,
+   "seeds": [
+    "0",
+    "1",
+    "2"
+   ],
+   "counts": [
+    "5",
+    "8"
+   ],
+   "gate_cells": 6
+  },
+  "clutter-onset": {
+   "run": "audit_onset_clutter12k",
+   "present": true,
+   "cells": 6,
+   "seeds": [
+    "0",
+    "1",
+    "2"
+   ],
+   "counts": [
+    "5",
+    "8"
+   ],
+   "gate_cells": 6
+  }
+ },
+ "published_provenance": {
+  "motion": {
+   "runs": [
+    "literature_baselines_motion",
+    "literature_baselines_motion_s34"
+   ],
+   "cells": 15,
+   "seeds": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4"
+   ]
+  },
+  "onset": {
+   "runs": [
+    "literature_baselines_onset",
+    "literature_baselines_onset_s34"
+   ],
+   "cells": 15,
+   "seeds": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4"
+   ]
+  }
+ }
+}

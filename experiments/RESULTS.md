@@ -5,6 +5,27 @@ Everything here is reproducible from `experiments/` scripts. All comparison numb
 `experiments/paper_tables/` (`main_results.{md,csv}`, `efficiency.md`, `sparsity_ablation.md`,
 `seed_dispersion.json`).
 
+## Lost runs regenerated (2026-10-12/14) — the paper now quotes these, not the values below
+
+`experiments/regenerate_missing_runs.sh` rebuilt every run group the paper quotes whose
+directory had been lost; `python paper/claims.py` now recomputes 136 of the paper's 143 numbers
+from run artifacts (the other 7 are settings). Where a regenerated value differs from the one
+recorded further down this file, **the regenerated one is current** and is what the paper says.
+
+| result | recorded below | regenerated | note |
+|---|---|---|---|
+| planar onset audit, velocity rule, scaling series | — | identical | data-only or deterministic |
+| per-domain table: billiards, planar, tabletop | — | identical | |
+| per-domain table: clutter | P 0.878, rest 0.025, frac 0.358, thr 0.029 | 0.863 / 0.024 / 0.345 / 0.028 | Chipmunk run is deterministic today; original likely predates a clutter-env edit. Clutter benchmarks were built at 0.029 |
+| dense-packed audit (after packing) | 0.768 / 0.757 / 0.909 / gate 0.822 | 0.784 / 0.776 / 0.906 / 0.823 | original most likely on the July leaky `splits_*_dense`; rerun on `splits_clean_*_dense` |
+| W3 relocated-objects-stay-put (gate/oracle/blind, N=3) | 0.949 / 0.951 / 0.867 | 0.942 / 0.942 / 0.865 | strict `valid_fraction` now reported too: gate 0.943/0.858/0.799, oracle 0.946/0.906/0.839, blind 0.760/0.438/0.225 |
+| interaction construction stats | 0.151 m, 94.4% | 0.143 m, 92.8% (0.061 m matches) | original computation was never recorded; `interaction_construction_stats` defines it |
+| published models, onset (now 5 seeds at N=3,5,8) | trivial 0.166, onset F1 0.388, PETS AUC 0.519, C-SWM 0.884 / 0.919 | 0.182 / 0.365 / 0.532 / 0.882 / 0.918 | seeds 3-4 at N=8 had never been run |
+| planning, seed 0 | PETS .35, sparse .25, SlotFormer .15, NPS .15, GNS .10 | PETS .25, sparse .30, SlotFormer .10, NPS .20, GNS .00 | baselines retrained; ±0.10 per 20-episode cell |
+| planning, pooled over 3 seeds | PETS 0.300 vs sparse 0.250 (1 seed) | PETS 0.267, NPS 0.133, GNS/C-SWM 0.083, SlotFormer 0.033, **sparse 0.250 (3 seeds: .30/.15/.30)** | only PETS and NPS now plan above zero at every seed |
+| P(changed \| already moving), motion | 0.94-0.99 | 0.87-0.95 (precision of `already_moving`, 5-seed clean audit) | old range was from the leaky hard subset |
+| onset transitions as % of steps | clutter ~0.065%, tabletop ~3% | clutter 0.20%, tabletop 1.6% | hard/full rows from the split metadata of the splits actually audited |
+
 ## ⚠⚠ READ FIRST: the headline change-detection metric is dominated by a momentum shortcut
 
 *Found 2026-08-08. `experiments/momentum_shortcut.py`, clean splits, 3 seeds.*
@@ -357,6 +378,13 @@ with gates trained on the interaction benchmark itself. N=3 is excluded: at ~250
 test rows per cell it is too thin to train on or measure with. Build:
 `experiments/build_interaction_benchmark.py` (9 cells, all verified episode-disjoint).*
 
+> **Provenance note, 2026-09-03.** This run directory had been lost from disk
+> (`experiments/runs/` is gitignored). It was **regenerated from the surviving splits** —
+> gates retrained, battery re-run — and reproduces the numbers below to three decimals
+> (`already_moving` 0.783, `nearest_to_pusher` 0.437, `moving_or_near_mover` 0.955, learned
+> gate 0.709 / 0.772). The table is therefore traceable again, and the reproduction is itself
+> a check that the pipeline is deterministic under a fixed seed.
+
 The interaction benchmark keeps only transitions where a stationary object starts moving
 **while some other object is closer to the pusher** -- change that reached the object
 indirectly. Construction verified on the built splits: every kept row contains an indirect
@@ -400,11 +428,38 @@ Three benchmarks, three filters, each removing the previous shortcut -- and the 
 rule stays at **0.93-0.96 every time**, never once dropping to where a learned model could
 lead. What changes is only *which* one-liner wins:
 
-| benchmark | what it removes | what wins instead | best trivial |
-|---|---|---|---|
-| motion | nothing | velocity (`already_moving`) | 0.927 |
-| onset | the velocity shortcut | geometry (`nearest_to_pusher`, 0 params) | 0.961 |
-| interaction | the geometry shortcut | **propagated** kinematics (`moving_or_near_mover`) | 0.955 |
+| benchmark | what it removes | what wins instead | best trivial | best *single-family* rule |
+|---|---|---|---|---|
+| motion | nothing | `moving_or_near` (velocity OR proximity, 1 param) | 0.927 | velocity `already_moving` 0.866 |
+| onset | the velocity shortcut | `moving_or_near` (1 param) | 0.961 | geometry `pusher_near` 0.931, `nearest_to_pusher` 0.925 (0 params) |
+| interaction | the geometry shortcut | `moving_or_near_mover` (propagated) | 0.955 | propagated `moving_or_near_mover` 0.955 |
+
+> **⚠ CORRECTION (2026-09-03).** The three rows above previously read *velocity
+> (`already_moving`) 0.927* / *geometry (`nearest_to_pusher`, 0 params) 0.961* /
+> *propagated (`moving_or_near_mover`) 0.955*. The **numbers** were right — they are the
+> best-trivial column of the detailed tables above — but two of the three **rule names were
+> not**: they name the best rule of the *family the filter newly exposes*, not the argmax of
+> the battery. Read off the detailed tables, `already_moving` scores **0.866** on motion (not
+> 0.927) and `nearest_to_pusher` scores **0.925** on onset (not 0.961); the argmax on both is
+> `moving_or_near` at 0.927 / 0.961. The mislabelling propagated verbatim into the abstract of
+> `paper/main.tex` and is fixed there too. Recorded rather than quietly swapped, per the
+> standing rule.
+>
+> **What this costs, and what it does not.** It costs the tidy reading that each filter is
+> defeated by a *different* rule class: the same one-parameter rule tops both motion and onset.
+> It costs nothing in the result itself, and the corrected arc is the sharper one, because it
+> is about what each filter *destroys* rather than about naming a winner:
+>
+> | rule | motion | onset | interaction |
+> |---|---|---|---|
+> | velocity `already_moving` | **0.866** | 0.188 | 0.783 |
+> | geometry `nearest_to_pusher` (0 params) | 0.823 | **0.925** | 0.437 |
+> | propagated `moving_or_near_mover` | 0.915 | 0.315 | **0.955** |
+> | **best trivial rule** | **0.927** | **0.961** | **0.955** |
+>
+> Each filter demonstrably kills its predecessor's rule -- velocity 0.866 -> 0.188, geometry
+> 0.925 -> 0.437 -- which is exactly what each was built to do, and the bottom row does not
+> move. That is the claim, and it survives the correction intact.
 
 A second failure mode is visible in the last column: the interaction filter selects
 multi-change events, so the positive rate rises and the degenerate `always_change` baseline
@@ -420,10 +475,11 @@ need a task where change is not locally determined -- multiple simultaneous actu
 occluded or long-range coupling, delayed effects -- which is a change of *task*, not of filter.
 
 **What the paper should claim.** Not "here is a corrected benchmark". Rather: three successive
-corrections, each defeating its predecessor's shortcut and each losing to a different
-one-liner at the same ~0.95 level, plus a reusable audit battery and the methodological
-requirement that it be run *with rules invented against the benchmark under test*. That is
-harder to dismiss than a fourth filter would have been.
+corrections, each demonstrably destroying the shortcut it was built against and each still
+losing to some one-liner at the same ~0.95 level, plus a reusable audit battery and the
+methodological requirement that it be run *with rules invented against the benchmark under
+test*. That is harder to dismiss than a fourth filter would have been. (Note the wording:
+*some* one-liner, not *a different* one-liner -- see the correction above.)
 
 ### What this costs, and what survives
 
@@ -511,6 +567,47 @@ manipulation this project has found that *erodes* the shortcut rather than swapp
 `experiments/clutter_onset_rebuild.sh` regenerates N=5 and N=8 at **12000 episodes per cell**
 to land near the other benchmarks' row count. N=3 is excluded and stays excluded: it would
 need ~27000 episodes per cell, and the exclusion is reported rather than quietly applied.
+
+#### ✅ 2026-09-03: the rebuild landed, and the hypothesis is CONFIRMED
+
+*`experiments/runs/audit_onset_clutter12k/`, N=5 and N=8 x 3 seeds. **These numbers ARE
+reportable**; the ones in the boxed note above are not.*
+
+The rebuild reached the row counts it was built for -- **697-1225 train, 81-156 test per
+cell**, against the underpowered attempt's 80-174 train / 11-19 test and comparable to the
+other benchmarks' ~750-950. No cell falls below this project's stated 250-train / 35-test
+minimum.
+
+| rule | params | clutter-onset F1 | *(tabletop onset, for contrast)* |
+|---|---|---|---|
+| `moving_or_near` | 1 | **0.8207** | *0.9609* |
+| `near_pusher_or_mover` | 1 | 0.7817 | *0.9346* |
+| `pusher_near` | 1 | 0.6984 | *0.9316* |
+| `nearest_to_pusher` | **0** | 0.6557 | *0.9280* |
+| `logistic_on_distance` | 2 | 0.5765 | *0.9191* |
+| `always_change` | 0 | 0.4850 | *0.3874* |
+| `already_moving` | 0 | 0.4491 | *0.1823* |
+| **learned gate** (`global`) | ~7k | **0.4247** | *0.4989* |
+| **learned gate** (`contact`) | ~7k | **0.3381** | *0.7168* |
+
+**1. The prediction recorded in the boxed note above is confirmed at full power.** The trivial
+ceiling falls to **0.821** -- the first time in the project it has dropped below 0.93, and
+close to the 0.851 the underpowered run indicated. Dense packing is the first manipulation
+found that *erodes* the shortcut rather than swapping one for another. The parameter-free
+proximity rule falls furthest, 0.928 -> 0.656, which is exactly the mechanism: packing removes
+the spatial unambiguity that made "nearest to the pusher" near-oracular.
+
+**2. It is not a fix, and this is the important half.** The learned gate falls *further* than
+the rules do: `gate_minus_best_trivial` is **-0.396**, the largest trivial-over-learned margin
+in the project, against -0.104 on motion and -0.244 on onset. The same construction that costs
+the rules 0.14 costs the gate 0.29. Making the benchmark harder did not make it discriminative
+-- it degraded both and degraded the learned model faster.
+
+**3. What this does to the paper.** The abstract's "the best trivial rule never falls below
+0.93" is **retired**; it was true of the three tabletop/billiards benchmarks and is false here.
+The replacement claim is stronger and is now what the paper argues: across the three filtered
+benchmarks the ceiling sits at 0.93-0.96, and the one manipulation that lowers it lowers the
+learned models further still. *Harder is not the same as discriminative.*
 
 ## ICLR-track additions (2026-08-15) — external validity of the shortcut
 
@@ -621,6 +718,27 @@ sparsity over *whether an object is transformed*, and having the first does not 
 second. This was pre-registered as prediction (b) and is the single most load-bearing check
 on the paper's attribution.
 
+> **RE-RUN AT FIVE SEEDS, 2026-09-03.** The seed 0-2 run directories had been lost from disk
+> and were regenerated; seeds 3-4 already existed, so the table is now **15 cells on motion**
+> and 12 on onset rather than 9. Every conclusion above survives, the numbers moving only in
+> the third decimal:
+>
+> | quantity | 3 seeds | **5 seeds** |
+> |---|---|---|
+> | trivial velocity, motion, N=3/5/8 | 0.897 / 0.870 / 0.832 | **0.901 / 0.862 / 0.836** |
+> | best published model, motion, N=3/5/8 | 0.539 / 0.405 / 0.313 | **0.542 / 0.397 / 0.303** |
+> | published recall range | 0.9986-1.0000 | **0.9928-1.0000** |
+> | trivial, onset benchmark | 0.1875 | **0.166** |
+> | published onset F1 | 0.3662-0.3663 | **0.388** |
+> | PETS disagreement AUC, motion -> onset | 0.766 -> 0.527 | **0.757 -> 0.519** |
+> | C-SWM Hits@1, motion -> onset | 0.305 -> 0.884 | **0.288 -> 0.884** |
+>
+> **The paired difference is now properly powered.** Against the *best* published model per
+> seed, the trivial rule leads by **-0.359 / -0.465 / -0.533** at N=3/5/8, with 95% difference
+> CIs of [-0.377,-0.336], [-0.471,-0.458] and [-0.561,-0.505] -- all excluding zero. The exact
+> sign-flip p is **0.0625 at every count, which is the n=5 floor**: the seeds agree unanimously.
+> As always, a p sitting at its floor says nothing about effect size; quote the difference CI.
+
 **Onset benchmark — the ranking inverts, exactly as the correction predicts:**
 
 | model | F1 | onset F1 | recall |
@@ -726,6 +844,44 @@ itself worth reporting, because "standard object-centric perception front ends f
 sparse-foreground manipulation scenes" is a useful negative for anyone attempting the same
 thing. The remaining work is a single uninterrupted training run per condition on a machine
 that is not simultaneously generating data.
+
+### 2026-09-03: the runs completed. The fix is REFUTED and the comparison is UNUSABLE.
+
+*`experiments/runs/pixel_keypoint_fg{0,10}/`, `experiments/runs/pixel_slot_control/`.
+**N=3, seed 0 - one cell each.** Read point 3 before quoting anything.*
+
+| condition | match distance | trivial_pixel F1 | slot_twoframe | slot_oneframe |
+|---|---|---|---|---|
+| keypoint, foreground-weight 0 | 21.0 px | 0.703 | 0.885 | 0.882 |
+| keypoint, foreground-weight 10 | **20.3 px** | 0.576 | 0.873 | 0.860 |
+| Slot Attention control | 25.8 px | 0.607 | 0.690 | 0.649 |
+
+**1. The foreground-weighted loss does not work.** It was implemented, unit-tested and recorded
+above as "not yet validated". Now validated: **21.0 px -> 20.3 px**, against ~33 px chance and
+<10 px healthy. A 0.7 px improvement is not a fix. Recorded as refuted.
+
+**2. Slot Attention no longer collapses outright** (25.8 px against the 33.4 px above, which was
+indistinguishable from chance) but is still nowhere near localising an 8 px object.
+
+**3. Pre-registered prediction (a) is REFUTED AS STATED, and the refutation is uninformative.**
+The prediction was that `trivial_pixel` would beat both learned conditions, as it does on state.
+It loses, 0.703 to 0.882. **This must NOT be written up as "the degeneracy disappears from
+pixels".** The reason is arithmetic:
+
+> The label is a displacement of **0.020 m**. The renderer maps 0.60 m onto 95 px = 158.3 px/m,
+> so "changed" is a **3.17 px** shift. The front end localises to **20.3-25.8 px**.
+> `trivial_pixel` is a centroid difference, so it must resolve a 3 px signal through 20 px of
+> noise, while the learned conditions consume the whole slot embedding and are not handicapped
+> the same way. The comparison measures the perception stack, not the benchmark.
+
+**4. Prediction (b) is directionally confirmed but not quotable:** `slot_twoframe` beats
+`slot_oneframe` on F1 and loses to it on onset F1, mirroring `global` vs `contact` - but the
+margins are 0.003-0.013 at **n=1**, which is noise.
+
+**Status: the pixel benchmark is still blocked at perception, now with numbers.** Nothing here
+is quotable as a change-detection result. What it establishes is (i) the foreground-weighting
+fix fails and (ii) the arithmetic above, which any future attempt must clear first: a front end
+under ~3 px, or a coarser motion threshold, or a higher resolution.
 
 ## ⚠ Known issue: the splits behind every number below leak (found 2026-08-08)
 
@@ -858,10 +1014,10 @@ removed, because what refuted each of them is itself a result.*
 | Parameter efficiency | **de-emphasised** — true but uninteresting; invites the "just smaller" objection |
 | Oracle-gate, param-matched, transfer, sample efficiency | **re-verified** on clean splits, 3 seeds |
 | Interaction benchmark | **current, and negative** — built, trained on, and audited (billiards, N=5/8 x 3 seeds). It defeats `nearest_to_pusher` (0.925 -> 0.437) and is then won by `moving_or_near_mover` at 0.955 vs the learned gate's 0.772 |
-| Pixel benchmark | **built, not run** — Slot Attention collapses on these scenes (objects ≈0.7% of frame); a keypoint front end with a foreground-weighted loss is implemented as the alternative but **not yet validated**. No pixel number may be quoted |
-| Audit battery coverage | **clutter onset built 2026-08-18, but UNDERPOWERED and not reportable** (38–174 train rows/cell; see the boxed note in READ SECOND). Rebuilding at 12000 episodes via `clutter_onset_rebuild.sh` is the outstanding item. Otherwise: tabletop-motion, tabletop-onset, planar, dense-packed and interaction-billiards are covered |
-| Seed count on the audit tables | **n=3, at the significance floor** (min attainable p = 0.250). 5 seeds are required before any audit comparison is quoted as significant |
-| Planning vs published baselines | **1 training seed, 20 episodes (± 0.10)** — the PETS-over-sparse ordering is within noise for a single comparison and must not be quoted as an ordering until re-run at 3 seeds |
+| Pixel benchmark | **run 2026-09-03, and still blocked at perception.** The foreground-weighted loss is **refuted** (21.0 → 20.3 px, against ~33 px chance / <10 px healthy). Change-detection numbers exist but are **not quotable**: the label is a 3.17 px displacement and the front end localises to 20-26 px, so the trivial rule reads noise while the learned conditions read the slot embedding — and n=1 |
+| Audit battery coverage | **complete.** clutter-onset rebuilt at 12000 episodes/cell on 2026-09-03 and is now **current and reportable** (697–1225 train rows/cell): best trivial 0.821, learned gate 0.425, the largest margin in the project. The 1500-episode attempt stays in this document as a recorded underpowered result and must not be quoted. Also covered: tabletop-motion, tabletop-onset, planar, dense-packed and interaction-billiards |
+| Seed count on the audit tables | **n=5 on motion and onset** (audit and published-model tables both re-run 2026-09-03; floor now p=0.0625, and every headline comparison sits at it, i.e. the seeds agree unanimously). Interaction and clutter-onset remain n=3 x 2 counts. Quote difference CIs, never the floored p |
+| Planning vs published baselines | **3 training seeds landed 2026-09-03.** PETS is the best published planner at every seed (0.300 pooled) but is still NOT distinguishable from the sparse model's 0.250 at ±0.10 per cell. Our own replacement claim "four of five published models plan" is **refuted**: across three seeds only three of five plan above zero at every seed |
 
 **What a reader should take from this table.** The architecture claims have narrowed to one
 (error suppression on unchanged objects) plus one methodological contribution (the audit).
@@ -1455,8 +1611,12 @@ Per-object validity, **3 counts × 3 seeds** (`w3_validity_{3,5,8}obj_s{0,1,2}`)
 0.007 everywhere, and marginally *ahead* at N=8. That is the claim W3 needed, and unlike the
 unchanged-object-L2 result it is not definitional: nothing about the architecture guarantees
 that a gate trained for change detection produces placements the simulator agrees with.
-`others_match_fraction` is exactly 1.000 in every condition, confirming the relocation
-perturbs nothing it should not.
+**Corrected 2026-10-12:** an earlier version of this line said `others_match_fraction` is
+exactly 1.000 in every condition. The run logs (`w3_batch.log`, `w3_8obj.log`) show it is 1.000
+in 12 of 27 cells and 0.892–0.994 in the rest: in some splices the relocation *does* change how
+an untouched object moves. The table above is `per_object_stationary_fraction` (did the
+relocated objects stay put), not `valid_fraction` (that *and* every other object unchanged).
+Any wording that calls these numbers "validity" should say which one it means.
 
 **The advantage over blind splicing grows monotonically with object count** (+0.082 / +0.138 /
 +0.174). An earlier note in this document predicted the opposite, reasoning that at high N
@@ -1821,6 +1981,36 @@ statements are the qualitative ones -- four published models plan, three of the 
 including ours cluster in the 0.10-0.35 band, and the sparse model is not distinguishable
 from the best of them. Re-running the published baselines across three training seeds is the
 obvious next step and is not yet done.
+
+> ### ✅ THREE TRAINING SEEDS LANDED, 2026-09-03 — and they refute the replacement claim too
+>
+> *`experiments/runs/planning_literature_3obj_s{1,2}/`, same planner, cost, and 20 held-out
+> episode configurations (base seed 5000); only the baselines' training seed varies. Seed 0 is
+> the published run above.*
+>
+> | model | s0 | s1 | s2 | mean | above zero in |
+> |---|---|---|---|---|---|
+> | **pets** | 0.35 | 0.25 | 0.30 | **0.300** | **3/3** |
+> | gns | 0.10 | 0.15 | 0.10 | 0.117 | 3/3 |
+> | nps | 0.15 | 0.15 | 0.05 | 0.117 | 3/3 |
+> | cswm | 0.00 | 0.20 | 0.05 | 0.083 | 2/3 |
+> | slotformer | 0.15 | 0.00 | 0.00 | 0.050 | 1/3 |
+>
+> **1. PETS is genuinely the best published planner**, not a one-seed fluke: it leads every
+> other published model at every seed, pooling to 18/60 successes. The reasoning recorded below
+> — that likelihood training is what clears the no-op floor on contact-driven motion — survives.
+>
+> **2. It still cannot be said to beat ours.** 0.300 against the sparse model's 0.250 (one
+> training seed), at ±0.10 per 20-episode cell. The runbook's rule stands: report that the two
+> are not distinguishable, not an ordering.
+>
+> **3. "Four of five published models plan" is ALSO refuted, and it was our own replacement
+> claim.** It came from seed 0, where SlotFormer scored 0.150; across three seeds SlotFormer is
+> 0.050 (0/20 at two of them) and C-SWM is 0.083 having scored 0.000 at seed 0. The defensible
+> statement is **three of five plan above zero at every seed**. Single-seed planning comparisons
+> at 20 episodes are unreliable in *whichever* direction they point — which is this document's
+> own lesson, arriving for the second time on the control side. Recorded rather than swapped.
+
 
 **Why PETS in particular is a plausible winner rather than a fluke.** It is the only baseline
 trained by likelihood rather than squared error, and W1 already established on the prediction
