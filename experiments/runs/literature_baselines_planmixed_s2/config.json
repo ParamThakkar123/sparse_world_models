@@ -1,0 +1,31 @@
+{
+  "attention_blocks": 2,
+  "attention_heads": 4,
+  "baselines": [
+    "gns",
+    "cswm",
+    "slotformer",
+    "pets",
+    "nps"
+  ],
+  "batch_size": 128,
+  "capacity_match": true,
+  "checkpoint_dir": "models\\checkpoints",
+  "checkpoint_tag": "litplan",
+  "counts": [
+    3
+  ],
+  "device": "cpu",
+  "ensemble_size": 5,
+  "epochs": 25,
+  "feature_mode": "contact",
+  "lr": 0.001,
+  "message_passing_steps": 3,
+  "num_layers": 2,
+  "num_rules": 4,
+  "run_name": "literature_baselines_planmixed_s2",
+  "seeds": [
+    2
+  ],
+  "split_template": "data/transitions/splits_plan_mixed_3obj/plan_mixed_3obj_{split}.npz"
+}

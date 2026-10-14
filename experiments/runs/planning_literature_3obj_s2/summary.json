@@ -1,0 +1,41 @@
+{
+  "conditions": {
+    "cswm": {
+      "mean_final_distance": 0.2857627846520556,
+      "mean_plan_time_ms_per_step": 214.05370024997865,
+      "mean_steps_on_success": 6.0,
+      "num_episodes": 20,
+      "success_rate": 0.05
+    },
+    "gns": {
+      "mean_final_distance": 0.3982902114412638,
+      "mean_plan_time_ms_per_step": 618.1543566388879,
+      "mean_steps_on_success": 26.0,
+      "num_episodes": 20,
+      "success_rate": 0.1
+    },
+    "nps": {
+      "mean_final_distance": 0.3755888015473452,
+      "mean_plan_time_ms_per_step": 271.55297133333687,
+      "mean_steps_on_success": 9.0,
+      "num_episodes": 20,
+      "success_rate": 0.05
+    },
+    "pets": {
+      "mean_final_distance": 0.12119979568770925,
+      "mean_plan_time_ms_per_step": 307.24475021766773,
+      "mean_steps_on_success": 15.333333333333334,
+      "num_episodes": 20,
+      "success_rate": 0.3
+    },
+    "slotformer": {
+      "mean_final_distance": 0.35435659419478277,
+      "mean_plan_time_ms_per_step": 309.2951845000456,
+      "mean_steps_on_success": NaN,
+      "num_episodes": 20,
+      "success_rate": 0.0
+    }
+  },
+  "results_csv": "experiments\\runs\\planning_literature_3obj_s2\\planning_results.csv",
+  "results_md": "experiments\\runs\\planning_literature_3obj_s2\\planning_results.md"
+}

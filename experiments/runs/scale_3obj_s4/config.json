@@ -1,0 +1,12 @@
+{
+  "episodes": 250,
+  "max_steps": 100,
+  "min_object_separation": null,
+  "num_objects": 3,
+  "object_bound": null,
+  "output": "data\\transitions\\scale_3obj_s4.npz",
+  "policy": "scripted",
+  "seed": 4,
+  "simulator": "tabletop",
+  "task": "tabletop_pushing"
+}

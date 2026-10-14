@@ -1,0 +1,6 @@
+{
+  "best_epoch": 6,
+  "best_val_loss": 0.21568579946581581,
+  "checkpoint": "models\\checkpoints\\dense_uni_3obj_s3.pt",
+  "overfit_mode": false
+}

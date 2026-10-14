@@ -1,0 +1,6 @@
+{
+  "best_epoch": 24,
+  "best_val_loss": 0.14276837637956194,
+  "checkpoint": "experiments\\runs\\spotlight_video\\ckpt\\dense_3obj_s0.pt",
+  "overfit_mode": false
+}

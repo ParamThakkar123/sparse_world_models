@@ -1,0 +1,25 @@
+{
+  "base_seed": 5000,
+  "cem": {
+    "cem_iters": 3,
+    "elite_frac": 0.1,
+    "horizon": 15,
+    "init_std": 0.6,
+    "min_std": 0.05,
+    "num_samples": 256,
+    "proximity_weight": 0.3,
+    "terminal_weight": 3.0
+  },
+  "conditions": [
+    "sparse"
+  ],
+  "dense_checkpoint": "models\\checkpoints\\dense_3obj_s0.pt",
+  "max_steps": 60,
+  "min_object_separation": null,
+  "num_episodes": 20,
+  "num_objects": 3,
+  "object_bound": null,
+  "plan_seed": 0,
+  "sparse_checkpoint": "models\\checkpoints\\sparse_contact_3obj_s2.pt",
+  "task": "planning_mpc"
+}

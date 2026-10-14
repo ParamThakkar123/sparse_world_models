@@ -1,0 +1,26 @@
+{
+  "centroid_move_threshold": 0.35,
+  "counts": [
+    3
+  ],
+  "device": "cuda",
+  "extra_slots": 2,
+  "filter_mode": "motion",
+  "foreground_weight": 0.0,
+  "gate_batch_size": 128,
+  "gate_epochs": 30,
+  "gate_lr": 0.001,
+  "input_template": "data/transitions/onset_{n}obj_s{seed}.npz",
+  "max_train_rows": 4000,
+  "min_max_xy_delta": 0.02,
+  "perception": "keypoint",
+  "resolution": 96,
+  "run_name": "pixel_keypoint_fg0",
+  "seeds": [
+    0
+  ],
+  "slot_batch_size": 32,
+  "slot_epochs": 40,
+  "slot_lr": 0.0004,
+  "sparsity_weight": 0.2
+}

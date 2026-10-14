@@ -1,0 +1,59 @@
+{
+  "per_domain": {
+    "billiards": {
+      "at_rest_fraction": 0.6112074381069543,
+      "changed_fraction": 0.3936111890439531,
+      "derived_motion_threshold": 0.031,
+      "median_moved_displacement": 0.011636918721099695,
+      "p_changed_given_moving": 0.9817382140988601,
+      "p_changed_given_rest": 0.019814474885404717,
+      "retention_at_tabletop_threshold": 0.35645848527660373,
+      "target_step_retention": 0.13061057604942758,
+      "trivial_rule_f1_unfiltered": 0.9753763659962347
+    },
+    "clutter": {
+      "at_rest_fraction": 0.6186560356223114,
+      "changed_fraction": 0.34491240777579346,
+      "derived_motion_threshold": 0.028,
+      "median_moved_displacement": 0.009817985093428029,
+      "p_changed_given_moving": 0.862522995697684,
+      "p_changed_given_rest": 0.02401756481007341,
+      "retention_at_tabletop_threshold": 0.3301301274174867,
+      "target_step_retention": 0.13061057604942758,
+      "trivial_rule_f1_unfiltered": 0.9064654082201774
+    },
+    "planar": {
+      "at_rest_fraction": 0.8505228882231859,
+      "changed_fraction": 0.1520825932597554,
+      "derived_motion_threshold": 0.01,
+      "median_moved_displacement": 0.005103962133742041,
+      "p_changed_given_moving": 0.9499687501661014,
+      "p_changed_given_rest": 0.011287703101685894,
+      "retention_at_tabletop_threshold": 0.005954564684303175,
+      "target_step_retention": 0.13061057604942758,
+      "trivial_rule_f1_unfiltered": 0.9399106930187506
+    },
+    "tabletop": {
+      "at_rest_fraction": 0.8427820109240332,
+      "changed_fraction": 0.12408848362824054,
+      "derived_motion_threshold": 0.02,
+      "median_moved_displacement": 0.011429391904837556,
+      "p_changed_given_moving": 0.7144160533995021,
+      "p_changed_given_rest": 0.0148734725193345,
+      "retention_at_tabletop_threshold": 0.13183020433991757,
+      "target_step_retention": 0.13061057604942758,
+      "trivial_rule_f1_unfiltered": 0.7954238738854688
+    }
+  },
+  "predictions": {
+    "billiards_has_strongest_shortcut": true,
+    "clutter_has_weakest_shortcut": false,
+    "ranking_by_p_changed_given_moving_ascending": [
+      "tabletop",
+      "clutter",
+      "planar",
+      "billiards"
+    ],
+    "shortcut_exists_in_every_domain": true
+  }
+}

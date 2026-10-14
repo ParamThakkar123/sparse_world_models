@@ -1,0 +1,7 @@
+{
+  "avg_episode_length": 47.1024,
+  "avg_episode_return": -13.138494360697894,
+  "num_episodes": 2500.0,
+  "num_transitions": 117756.0,
+  "success_rate": 0.79
+}

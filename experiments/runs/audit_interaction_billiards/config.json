@@ -1,0 +1,25 @@
+{
+  "benchmarks": [
+    "interaction"
+  ],
+  "contact_gate_templates": [
+    "interaction=models/checkpoints/sparse_interaction_contact_billiards_{n}obj_s{seed}.pt"
+  ],
+  "counts": [
+    5,
+    8
+  ],
+  "device": "cpu",
+  "gate_templates": [
+    "interaction=models/checkpoints/sparse_interaction_billiards_{n}obj_s{seed}.pt"
+  ],
+  "run_name": "audit_interaction_billiards",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "split_templates": [
+    "interaction=data/transitions/splits_interaction_billiards_{n}obj_s{seed}/interaction_billiards_{n}obj_s{seed}_hard_{split}.npz"
+  ]
+}

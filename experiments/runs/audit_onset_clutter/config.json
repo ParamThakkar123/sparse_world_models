@@ -1,0 +1,26 @@
+{
+  "benchmarks": [
+    "onsetclutter"
+  ],
+  "contact_gate_templates": [
+    "onsetclutter=models/checkpoints/sparse_onsetclutter_contact_{n}obj_s{seed}.pt"
+  ],
+  "counts": [
+    3,
+    5,
+    8
+  ],
+  "device": "cpu",
+  "gate_templates": [
+    "onsetclutter=models/checkpoints/sparse_onsetclutter_{n}obj_s{seed}.pt"
+  ],
+  "run_name": "audit_onset_clutter",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "split_templates": [
+    "onsetclutter=data/transitions/splits_onsetclutter_{n}obj_s{seed}/onsetclutter_{n}obj_s{seed}_hard_{split}.npz"
+  ]
+}

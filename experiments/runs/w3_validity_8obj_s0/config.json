@@ -1,0 +1,17 @@
+{
+  "augment_ratio": 1.0,
+  "budgets": [
+    0.1,
+    0.25,
+    0.5,
+    1.0
+  ],
+  "count": 8,
+  "delta_head": "mdn",
+  "env": "tabletop",
+  "seed": 0,
+  "stages": [
+    "validity"
+  ],
+  "task": "counterfactual_augmentation"
+}

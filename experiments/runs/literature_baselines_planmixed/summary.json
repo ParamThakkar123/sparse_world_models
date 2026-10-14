@@ -1,0 +1,77 @@
+{
+  "baselines_beaten_by_trivial_rule": [
+    "gns",
+    "slotformer",
+    "nps",
+    "pets",
+    "cswm"
+  ],
+  "citations": {
+    "cswm": "Kipf, van der Pol & Welling, ICLR 2020",
+    "gns": "Sanchez-Gonzalez et al. 2020 / Li et al. 2019",
+    "nps": "Goyal et al., NeurIPS 2021",
+    "pets": "Chua et al., NeurIPS 2018",
+    "slotformer": "Wu et al., ICLR 2023"
+  },
+  "cswm_native": {
+    "hits_at_1": 0.998046875,
+    "mrr": 0.9990234375
+  },
+  "every_ungated_baseline_is_degenerate": false,
+  "per_count": {
+    "3obj": {
+      "cswm": {
+        "f1": 0.17251927076960724,
+        "onset_f1": 0.03253700718159168,
+        "recall": 0.986013986013986,
+        "unchanged_object_l2": 0.01839272491633892
+      },
+      "gns": {
+        "f1": 0.17382836275106517,
+        "onset_f1": 0.0323851203501094,
+        "recall": 0.9986013986013986,
+        "unchanged_object_l2": 0.031793806701898575
+      },
+      "no_op": {
+        "f1": 0.0,
+        "onset_f1": 0.0,
+        "recall": 0.0,
+        "unchanged_object_l2": 1.342757877864642e-05
+      },
+      "nps": {
+        "f1": 0.17721837633731904,
+        "onset_f1": 0.033343437405274325,
+        "recall": 0.9846153846153847,
+        "unchanged_object_l2": 0.021658897399902344
+      },
+      "pets": {
+        "f1": 0.17661816357250376,
+        "onset_f1": 0.03291062801932367,
+        "recall": 0.9846153846153847,
+        "unchanged_object_l2": 0.03300906717777252
+      },
+      "slotformer": {
+        "f1": 0.17349046288421818,
+        "onset_f1": 0.032314410480349345,
+        "recall": 0.9986013986013986,
+        "unchanged_object_l2": 0.05544459819793701
+      },
+      "trivial_velocity": {
+        "f1": 0.8200950441276307,
+        "onset_f1": 0.0,
+        "recall": 0.8447552447552448,
+        "unchanged_object_l2": null
+      }
+    }
+  },
+  "pets_disagreement_auc": 0.44354027526299517,
+  "recall_by_ungated_baseline": {
+    "cswm": 0.986013986013986,
+    "gns": 0.9986013986013986,
+    "nps": 0.9846153846153847,
+    "pets": 0.9846153846153847,
+    "slotformer": 0.9986013986013986
+  },
+  "skipped": [],
+  "trivial_rule_f1": 0.8200950441276307
+}

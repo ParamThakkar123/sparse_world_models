@@ -1,0 +1,18 @@
+{
+  "counts": "[5, 8]",
+  "env": "clutter",
+  "episodes_per_chunk": "2500",
+  "max_steps": "100",
+  "min_max_xy_delta": "None",
+  "min_object_separation": "0.07",
+  "num_chunks": "6",
+  "object_bound": "0.26",
+  "output_template": "data/transitions/splits_interaction_{env}_{n}obj_s{seed}",
+  "round_decimals": "4",
+  "run_name": "build_interaction_clutter",
+  "scratch_dir": "data\\transitions\\_interaction_tmp",
+  "seeds": "[0, 1, 2]",
+  "threshold": 0.029,
+  "train_frac": "0.8",
+  "val_frac": "0.1"
+}

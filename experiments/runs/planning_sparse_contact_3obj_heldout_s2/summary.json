@@ -1,0 +1,13 @@
+{
+  "conditions": {
+    "sparse": {
+      "mean_final_distance": 0.13729212732179794,
+      "mean_plan_time_ms_per_step": 164.3249821964208,
+      "mean_steps_on_success": 21.333333333333332,
+      "num_episodes": 20,
+      "success_rate": 0.3
+    }
+  },
+  "results_csv": "experiments\\runs\\planning_sparse_contact_3obj_heldout_s2\\planning_results.csv",
+  "results_md": "experiments\\runs\\planning_sparse_contact_3obj_heldout_s2\\planning_results.md"
+}

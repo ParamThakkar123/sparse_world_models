@@ -1,0 +1,120 @@
+{
+  "all_episode_disjoint": true,
+  "cells": [
+    {
+      "config_id_overlap_between_splits": {
+        "test&train": 0,
+        "test&val": 0,
+        "train&val": 0
+      },
+      "env": "clutter",
+      "episode_disjoint": true,
+      "keep_rate": 0.00031308575405131596,
+      "kept": {
+        "test": 22,
+        "train": 185,
+        "val": 22
+      },
+      "object_count": 5,
+      "seed": 0,
+      "threshold": 0.029,
+      "total_generated_steps": 731429
+    },
+    {
+      "config_id_overlap_between_splits": {
+        "test&train": 0,
+        "test&val": 0,
+        "train&val": 0
+      },
+      "env": "clutter",
+      "episode_disjoint": true,
+      "keep_rate": 0.00032285718996092743,
+      "kept": {
+        "test": 29,
+        "train": 173,
+        "val": 33
+      },
+      "object_count": 5,
+      "seed": 1,
+      "threshold": 0.029,
+      "total_generated_steps": 727876
+    },
+    {
+      "config_id_overlap_between_splits": {
+        "test&train": 0,
+        "test&val": 0,
+        "train&val": 0
+      },
+      "env": "clutter",
+      "episode_disjoint": true,
+      "keep_rate": 0.0003007111819453006,
+      "kept": {
+        "test": 15,
+        "train": 188,
+        "val": 17
+      },
+      "object_count": 5,
+      "seed": 2,
+      "threshold": 0.029,
+      "total_generated_steps": 731599
+    },
+    {
+      "config_id_overlap_between_splits": {
+        "test&train": 0,
+        "test&val": 0,
+        "train&val": 0
+      },
+      "env": "clutter",
+      "episode_disjoint": true,
+      "keep_rate": 0.0006106779794879895,
+      "kept": {
+        "test": 33,
+        "train": 359,
+        "val": 41
+      },
+      "object_count": 8,
+      "seed": 0,
+      "threshold": 0.029,
+      "total_generated_steps": 709048
+    },
+    {
+      "config_id_overlap_between_splits": {
+        "test&train": 0,
+        "test&val": 0,
+        "train&val": 0
+      },
+      "env": "clutter",
+      "episode_disjoint": true,
+      "keep_rate": 0.0007458124119035624,
+      "kept": {
+        "test": 50,
+        "train": 419,
+        "val": 58
+      },
+      "object_count": 8,
+      "seed": 1,
+      "threshold": 0.029,
+      "total_generated_steps": 706612
+    },
+    {
+      "config_id_overlap_between_splits": {
+        "test&train": 0,
+        "test&val": 0,
+        "train&val": 0
+      },
+      "env": "clutter",
+      "episode_disjoint": true,
+      "keep_rate": 0.0,
+      "kept": {
+        "test": 0,
+        "train": 0,
+        "val": 0
+      },
+      "object_count": 8,
+      "seed": 2,
+      "threshold": 0.029,
+      "total_generated_steps": 0
+    }
+  ],
+  "min_train_rows": 0
+}

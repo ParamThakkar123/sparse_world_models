@@ -1,0 +1,6 @@
+{
+  "best_epoch": 12,
+  "best_val_loss": 0.1215276481440434,
+  "checkpoint": "models\\checkpoints\\dense_uni_5obj_s2.pt",
+  "overfit_mode": false
+}

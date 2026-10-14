@@ -1,0 +1,32 @@
+{
+  "benchmarks": [
+    "motion",
+    "onset"
+  ],
+  "contact_gate_templates": [
+    "motion=models/checkpoints/sparse_contact_clean_{n}obj_s{seed}.pt",
+    "onset=models/checkpoints/sparse_onset_contact_{n}obj_s{seed}.pt"
+  ],
+  "counts": [
+    3,
+    5,
+    8
+  ],
+  "device": "cpu",
+  "gate_templates": [
+    "motion=models/checkpoints/sparse_clean_{n}obj_s{seed}.pt",
+    "onset=models/checkpoints/sparse_onset_{n}obj_s{seed}.pt"
+  ],
+  "run_name": "onset_shortcut_audit_5seed",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "split_templates": [
+    "motion=data/transitions/splits_clean_{n}obj_s{seed}/scale_{n}obj_s{seed}_hard_{split}.npz",
+    "onset=data/transitions/splits_onset_{n}obj_s{seed}/onset_{n}obj_s{seed}_hard_{split}.npz"
+  ]
+}
